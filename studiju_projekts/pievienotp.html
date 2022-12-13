@@ -164,7 +164,35 @@
     function test_print() { 
         let personalsRowCount = personalsViss.length;
         
+        let personID = document.getElementById("personid").value;
+        let velStrada = document.getElementById("vel_strada").value;
+        let raditOther = "";
+        let raditDatuAizsardiba = "";
+        let radit = document.getElementById("radit").value;
+        let zp = document.getElementById("zp").value;
+        let fname = document.getElementById("fname").value;
+        let lname = document.getElementById("lname").value;
+        let grads = document.getElementById("grads").value;
+        let telnr = document.getElementById("telnr").value;
+
+        let amats1 =  "Amats 1";       // document.getElementById("amats").value;
+        let struktv1 = "Struktv 1";     // document.getElementById("str").value;
+        let amats2 = "Amats 2";
+        let struktv2 = "Struktv 2";
+        let amats3 = "Amats 3";
+        let struktv3 = "Struktv 3";
+
+        var inputArr = [personID, velStrada, "EMPTY_VALUE", "EMPTY_VALUE", radit, zp, fname, lname, grads, telnr, 
+                        amats1, struktv1, amats2, struktv2, amats3, struktv3, 
+                        "EMPTY_VALUE", "EMPTY_VALUE", "EMPTY_VALUE", "EMPTY_VALUE", "EMPTY_VALUE", "EMPTY_VALUE"];
+
+        for (var i=0; i<=inputArr.length; i++) {
+            alert(inputArr[i]);
+        }
+
+        alert(personalsViss[1][6]);
         alert(personalsRowCount);
+
     }
     </script>
     
@@ -176,7 +204,7 @@
         <label for="personid">Personas ID:&nbsp; </label><input type="text" id="personid" name="personid"size="24pt"></p>
 
         <label for="vel_strada">Vēl strādā:&nbsp; </label><input type="checkbox" id="vel_strada" name="vel_strada"size="24pt"></p>
-        <label for="radit">Name:&nbsp; </label><input type="checkbox" id="radit" name="radit"size="24pt"></p>
+        <label for="radit">Rādīt:&nbsp; </label><input type="checkbox" id="radit" name="radit"size="24pt"></p>
         <label for="zp">ZP:&nbsp; </label><input type="checkbox" id="zp" name="zp"size="24pt"></p>
         
         <label for="fname">Name:&nbsp; </label><input type="text" id="fname" name="fname"size="30pt"></p>
@@ -191,19 +219,19 @@
         <label for="struktura">Struktūrvienības veids 1:&nbsp; </label>
         <select name="struktura" id="struktura" class = "str"></select>
         </p>
-        <label for="amats">Amata veids 2:&nbsp; </label>
-        <select name="amats" id="amats" class = "amats"></select>
+        <label for="amats2">Amata veids 2:&nbsp; </label>
+        <select name="amats2" id="amats2" class = "amats2"></select>
         </p>
         <p>
-        <label for="struktura">Struktūrvienības veids:&nbsp; </label>
-        <select name="struktura" id="struktura" class = "str"></select>
+        <label for="struktura2">Struktūrvienības veids:&nbsp; </label>
+        <select name="struktura2" id="struktura2" class = "str2"></select>
         </p>
-        <label for="amats">Amata veids 3:&nbsp; </label>
-        <select name="amats" id="amats" class = "amats"></select>
+        <label for="amats3">Amata veids 3:&nbsp; </label>
+        <select name="amats3" id="amats3" class = "amats3"></select>
         </p>
         <p>
-        <label for="struktura">Struktūrvienības veids 3:&nbsp; </label>
-        <select name="struktura" id="struktura" class = "str"></select>
+        <label for="struktura3">Struktūrvienības veids 3:&nbsp; </label>
+        <select name="struktura3" id="struktura3" class = "str3"></select>
         </p>
         <button onclick=test_print()>Pievienot</button>
 </body>
