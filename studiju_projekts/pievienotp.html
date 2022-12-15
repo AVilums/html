@@ -3,6 +3,8 @@
 
 <head>
     <script type="text/javascript" src="csv.js"></script>
+    <script type="text/javascript" src="file.js"></script>
+
     <h1>Izvēlēties darba failus:</h1>
 
     <form id="myForm">
@@ -22,25 +24,6 @@
     </style>
 
     <script>
-        function readFileAsText(file) {
-            return new Promise(function (resolve, reject) {
-                let fr = new FileReader();
-
-                fr.onload = function () {
-                    resolve(fr.result);
-                };
-
-                fr.onerror = function () {
-                    reject(fr);
-                };
-
-                fr.readAsText(file);
-            });
-        }
-
-        var d1 = "!";
-        var d2 = ",";
-
         // Handle multiple fileuploads
         var amatiViss;
         var strukturasViss;
@@ -69,9 +52,9 @@
                 // alert(values[1]);
                 // alert(values[2]);
 
-                let viens = stringTo2dArray(values[0], d1, d2);
-                let divi = stringTo2dArray(values[1], d1, d2);
-                let tris = stringTo2dArray(values[2], d1, d2);
+                let viens = stringTo2dArray(values[0], "!", ",");
+                let divi = stringTo2dArray(values[1], "!", ",");
+                let tris = stringTo2dArray(values[2], "!", ",");
 
                 //prieks divdimensiju parbaudes
                 //alert(viens[0][0]+"\n"+divi[0][0]+"\n"+tris[0][0]);
@@ -130,7 +113,6 @@
         }
 
         function GFG_Fun(amati, struktura, personals) {
-
             var amatiem = amati;
             var strukturas = struktura;
             var personali = personals;
