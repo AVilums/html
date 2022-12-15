@@ -73,7 +73,7 @@
                             
             }
                     
-            function forpush(b){
+            function forpush(b) {
                             
                 for (let i=1;i<b.length;i++){
                     struktura.push(b[i][1]); //strukturu nosaukumi
@@ -92,28 +92,22 @@
                 var csvRows = [];
                 var temp;
 
-                //alert("cau");
-
-                for (let i=0; i<strukturasViss.length-1; i++){
-
+                for (let i=0; i<strukturasViss.length-1; i++) {
                     temp = "";
 
                     for (let j=0; j<strukturasViss[i].length; j++){
                          if(j<strukturasViss[i].length-1){
                             temp = temp + strukturasViss[i][j] + ",";
-                         }else{
+                         } else {
                             temp = temp + strukturasViss[i][j] + "!";
                          }
                     }
-
                     csvRows[i] = temp;
-
                 }
-                //alert(csvRows[17]);
 
-                //delftstack solution
-
-
+                // for (let i=0; i < csvRows.length; i++) {
+                //     alert(csvRows[i]);
+                // }
 
                 var universalBOM="\uFEFF";
 
@@ -123,13 +117,9 @@
                 var encodedUri = encodeURI(csvContent);
                 var link = document.createElement("a");
                 link.setAttribute("href", encodedUri);
-                link.setAttribute("download", "write.csv");
+                link.setAttribute("download", "strukturvienibas.csv");
                 document.body.appendChild(link); 
                 link.click();
-
-
-
-
 
 
  // var encodedUri = encodeURI(csvContent);
@@ -169,8 +159,6 @@
             }
 
             //let dataTo1dArr = [];
-
-
             
         </script> 
     </head>

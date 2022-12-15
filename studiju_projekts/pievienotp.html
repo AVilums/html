@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <script type = "text/javascript" src="csv.js"></script> 
     <h1>Izvēlēties darba failus:</h1>
 
     <form id="myForm">
@@ -78,10 +79,6 @@
         });
     }, false);
  
-    function stringTo2dArray(string, d1, d2) {
-        return string.split(d1).map(function(x){return x.split(d2)});
-    }
-
     const amati = [];
     const struktura = [];
     const personals = [];
@@ -190,12 +187,10 @@
             alert(inputArr[i]);
         }
 
-        alert(personalsViss[1][6]);
-        alert(personalsRowCount);
-
     }
     </script>
-    
+
+
     <h1>Personāla pievienošana</h1>
 
 </head>
