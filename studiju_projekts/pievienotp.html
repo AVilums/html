@@ -1,234 +1,238 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <script type = "text/javascript" src="csv.js"></script> 
+    <script type="text/javascript" src="csv.js"></script>
     <h1>Izvēlēties darba failus:</h1>
 
     <form id="myForm">
-        <label for="csvFile">Pievienojiet <b>amati.csv</b>, <b>stukturvienibas.csv</b> un <b>personals.csv</b> failus</label>
-        <input type="file" id="csvFile" accept=".csv" multiple/>
+        <label for="csvFile">Pievienojiet <b>amati.csv</b>, <b>stukturvienibas.csv</b> un <b>personals.csv</b>
+            failus</label>
+        <input type="file" id="csvFile" accept=".csv" multiple />
         <br />
     </form>
-    
+
     <style>
-    .amats{
-        width: 146pt;    
-    }
-        
-    .str{
-        width: 100pt;
-    }
+        .amats {
+            width: 146pt;
+        }
+        .str {
+            width: 100pt;
+        }
     </style>
-    
+
     <script>
-    
-    function readFileAsText(file){
-        return new Promise(function(resolve,reject){
-            let fr = new FileReader();
-            
-            fr.onload = function(){
-                resolve(fr.result);
-            };
+        function readFileAsText(file) {
+            return new Promise(function (resolve, reject) {
+                let fr = new FileReader();
 
-            fr.onerror = function(){
-                reject(fr);
-            };
+                fr.onload = function () {
+                    resolve(fr.result);
+                };
 
-            fr.readAsText(file);
-        });
-    }
-    
-    var d1 = "!";
-    var d2 = ",";
+                fr.onerror = function () {
+                    reject(fr);
+                };
 
-    // Handle multiple fileuploads
-    var amatiViss;
-    var strukturasViss;
-    var personalsViss;
-    
-    document.getElementById("csvFile").addEventListener("change", function(ev){
-        let files = ev.currentTarget.files;
-        let readers = [];
-
-        // Abort if there were no files selected
-        if(!files.length) return;
-
-        // Store promises in array
-        for(let i = 0;i < files.length;i++){
-            readers.push(readFileAsText(files[i]));
+                fr.readAsText(file);
+            });
         }
-                
-        // Trigger Promises
-        Promise.all(readers).then((values) => {
-            // Values will be an array that contains an item
-            // with the text of every selected file
-            // ["File1 Content", "File2 Content" ... "FileN Content"]
-                    
-            //prieks viendimensiju parbaudes
-            // alert(values[0]);
-            // alert(values[1]);
-            // alert(values[2]);
-        
-            let viens = stringTo2dArray(values[0],d1, d2);
-            let divi = stringTo2dArray(values[1],d1, d2);
-            let tris = stringTo2dArray(values[2],d1, d2);
-                   
-            //prieks divdimensiju parbaudes
-            //alert(viens[0][0]+"\n"+divi[0][0]+"\n"+tris[0][0]);
-            compare(viens,divi,tris);
-        });
-    }, false);
- 
-    const amati = [];
-    const struktura = [];
-    const personals = [];
-            
-    function compare(viens,divi,tris){
-        
-        if (viens[0][0]=="Am.ID" && divi[0][0]=="Str.ID" && tris[0][0]=="ID") {
-            forpush(viens,divi,tris); 
-        }else if (viens[0][0]=="Str.ID" && divi[0][0]=="Am.ID" && tris[0][0]=="ID"){
-            forpush(divi,viens,tris);
-        }else if (viens[0][0]=="ID" && divi[0][0]=="Str.ID" && tris[0][0]=="Am.ID"){
-            forpush(tris,divi,viens);
-        }else if (viens[0][0]=="ID" && divi[0][0]=="Am.ID" && tris[0][0]=="Str.ID"){
-            forpush(divi,tris,viens);
-        }else if (viens[0][0]=="Am.ID" && divi[0][0]=="ID" && tris[0][0]=="Str.ID"){
-            forpush(viens,tris,divi);
-        }else if (viens[0][0]=="Str.ID" && divi[0][0]=="ID" && tris[0][0]=="Am.ID"){
-            forpush(tris,viens,divi);
-        }else{ 
-            alert("Izvēlēti nepareizi faili");
-            window.open("Main.html", "_parent");
-        }
+
+        var d1 = "!";
+        var d2 = ",";
+
+        // Handle multiple fileuploads
+        var amatiViss;
+        var strukturasViss;
+        var personalsViss;
+
+        document.getElementById("csvFile").addEventListener("change", function (ev) {
+            let files = ev.currentTarget.files;
+            let readers = [];
+
+            // Abort if there were no files selected
+            if (!files.length) return;
+
+            // Store promises in array
+            for (let i = 0; i < files.length; i++) {
+                readers.push(readFileAsText(files[i]));
+            }
+
+            // Trigger Promises
+            Promise.all(readers).then((values) => {
+                // Values will be an array that contains an item
+                // with the text of every selected file
+                // ["File1 Content", "File2 Content" ... "FileN Content"]
+
+                //prieks viendimensiju parbaudes
+                // alert(values[0]);
+                // alert(values[1]);
+                // alert(values[2]);
+
+                let viens = stringTo2dArray(values[0], d1, d2);
+                let divi = stringTo2dArray(values[1], d1, d2);
+                let tris = stringTo2dArray(values[2], d1, d2);
+
+                //prieks divdimensiju parbaudes
+                //alert(viens[0][0]+"\n"+divi[0][0]+"\n"+tris[0][0]);
+                compare(viens, divi, tris);
+            });
+        }, false);
+
+        const amati = [];
+        const struktura = [];
+        const personals = [];
+
+        function compare(viens, divi, tris) {
+
+            if (viens[0][0] == "Am.ID" && divi[0][0] == "Str.ID" && tris[0][0] == "ID") {
+                forpush(viens, divi, tris);
+            } else if (viens[0][0] == "Str.ID" && divi[0][0] == "Am.ID" && tris[0][0] == "ID") {
+                forpush(divi, viens, tris);
+            } else if (viens[0][0] == "ID" && divi[0][0] == "Str.ID" && tris[0][0] == "Am.ID") {
+                forpush(tris, divi, viens);
+            } else if (viens[0][0] == "ID" && divi[0][0] == "Am.ID" && tris[0][0] == "Str.ID") {
+                forpush(divi, tris, viens);
+            } else if (viens[0][0] == "Am.ID" && divi[0][0] == "ID" && tris[0][0] == "Str.ID") {
+                forpush(viens, tris, divi);
+            } else if (viens[0][0] == "Str.ID" && divi[0][0] == "ID" && tris[0][0] == "Am.ID") {
+                forpush(tris, viens, divi);
+            } else {
+                alert("Izvēlēti nepareizi faili");
+                window.open("Main.html", "_parent");
+            }
             //alert(amati);
             //alert(struktura);
             //alert(personals)
-    }
-    
-    function forpush(a,b,c){
-        for (let i=1;i<a.length;i++){
-            amati.push(a[i][1]);
-        } 
-                
-        for (let i=1;i<b.length;i++){
-            struktura.push(b[i][1]);
         }
-             
-        for (let i=1;i<c.length;i++){
-            personals.push(c[i][0]);
-        } 
 
-        amatiViss=a;
-        strukturasViss=b;
-        personalsViss=c;
+        function forpush(a, b, c) {
+            for (let i = 1; i < a.length; i++) {
+                amati.push(a[i][1]);
+            }
+
+            for (let i = 1; i < b.length; i++) {
+                struktura.push(b[i][1]);
+            }
+
+            for (let i = 1; i < c.length; i++) {
+                personals.push(c[i][0]);
+            }
+
+            amatiViss = a;
+            strukturasViss = b;
+            personalsViss = c;
             //alert(amati);
             //alert(struktura);
             //alert(personals);
-            
-        GFG_Fun(amati,struktura,personals);
-    }
-        
-    function GFG_Fun(amati,struktura,personals){
 
-        var amatiem = amati;
-        var strukturas= struktura;
-        var personali=personals;
-
-        var select = document.getElementById("amats");
-        var select2 = document.getElementById("struktura");
-    
-        // TODO: create as single func()
-        for(var i = 0; i < amatiem.length; i++) {
-            var opt = amatiem[i];
-            var el = document.createElement("option");
-            el.textContent = opt;
-            el.value = opt;
-            select.appendChild(el);
+            GFG_Fun(amati, struktura, personals);
         }
 
-        //analogs otra dropdown aizpildei
-        // TODO: create as single func()
-        for(var i = 0; i < strukturas.length; i++) {
-            var opt2 = strukturas[i];
-            var el2 = document.createElement("option");
-            el2.textContent = opt2;
-            el2.value = opt2;
-            select2.appendChild(el2);
-        }
-    }        
-    
-    function test_print() { 
-        let personalsRowCount = personalsViss.length;
-        
-        let personID = document.getElementById("personid").value;
-        let velStrada = document.getElementById("vel_strada").value;
-        let raditOther = "";
-        let raditDatuAizsardiba = "";
-        let radit = document.getElementById("radit").value;
-        let zp = document.getElementById("zp").value;
-        let fname = document.getElementById("fname").value;
-        let lname = document.getElementById("lname").value;
-        let grads = document.getElementById("grads").value;
-        let telnr = document.getElementById("telnr").value;
+        function GFG_Fun(amati, struktura, personals) {
 
-        let amats1 =  "Amats 1";       // document.getElementById("amats").value;
-        let struktv1 = "Struktv 1";     // document.getElementById("str").value;
-        let amats2 = "Amats 2";
-        let struktv2 = "Struktv 2";
-        let amats3 = "Amats 3";
-        let struktv3 = "Struktv 3";
+            var amatiem = amati;
+            var strukturas = struktura;
+            var personali = personals;
 
-        var inputArr = [personID, velStrada, "EMPTY_VALUE", "EMPTY_VALUE", radit, zp, fname, lname, grads, telnr, 
-                        amats1, struktv1, amats2, struktv2, amats3, struktv3, 
-                        "EMPTY_VALUE", "EMPTY_VALUE", "EMPTY_VALUE", "EMPTY_VALUE", "EMPTY_VALUE", "EMPTY_VALUE"];
+            var select = document.getElementById("amats");
+            var select2 = document.getElementById("struktura");
 
-        for (var i=0; i<=inputArr.length; i++) {
-            alert(inputArr[i]);
+            // TODO: create as single func()
+            for (var i = 0; i < amatiem.length; i++) {
+                var opt = amatiem[i];
+                var el = document.createElement("option");
+                el.textContent = opt;
+                el.value = opt;
+                select.appendChild(el);
+            }
+
+            //analogs otra dropdown aizpildei
+            // TODO: create as single func()
+            for (var i = 0; i < strukturas.length; i++) {
+                var opt2 = strukturas[i];
+                var el2 = document.createElement("option");
+                el2.textContent = opt2;
+                el2.value = opt2;
+                select2.appendChild(el2);
+            }
         }
 
-    }
+        function test_print() {
+            let personalsRowCount = personalsViss.length;
+
+            let personID = document.getElementById("personid").value;
+            let velStrada = document.getElementById("vel_strada").value;
+            let raditOther = "";
+            let raditDatuAizsardiba = "";
+            let radit = document.getElementById("radit").value;
+            let zp = document.getElementById("zp").value;
+            let fname = document.getElementById("fname").value;
+            let lname = document.getElementById("lname").value;
+            let grads = document.getElementById("grads").value;
+            let telnr = document.getElementById("telnr").value;
+
+            let amats1 = "Amats 1";       // document.getElementById("amats").value;
+            let struktv1 = "Struktv 1";     // document.getElementById("str").value;
+            let amats2 = "Amats 2";
+            let struktv2 = "Struktv 2";
+            let amats3 = "Amats 3";
+            let struktv3 = "Struktv 3";
+
+            var inputArr = [personID, velStrada, "EMPTY_VALUE", "EMPTY_VALUE", radit, zp, fname, lname, grads, telnr,
+                amats1, struktv1, amats2, struktv2, amats3, struktv3,
+                "EMPTY_VALUE", "EMPTY_VALUE", "EMPTY_VALUE", "EMPTY_VALUE", "EMPTY_VALUE", "EMPTY_VALUE"];
+
+            for (var i = 0; i <= inputArr.length; i++) {
+                alert(inputArr[i]);
+            }
+        }
     </script>
-
 
     <h1>Personāla pievienošana</h1>
 
 </head>
-<body>
-    <p><form>
-        <label for="personid">Personas ID:&nbsp; </label><input type="text" id="personid" name="personid"size="24pt"></p>
 
-        <label for="vel_strada">Vēl strādā:&nbsp; </label><input type="checkbox" id="vel_strada" name="vel_strada"size="24pt"></p>
-        <label for="radit">Rādīt:&nbsp; </label><input type="checkbox" id="radit" name="radit"size="24pt"></p>
-        <label for="zp">ZP:&nbsp; </label><input type="checkbox" id="zp" name="zp"size="24pt"></p>
-        
-        <label for="fname">Name:&nbsp; </label><input type="text" id="fname" name="fname"size="30pt"></p>
-        <label for="lname">Last name:&nbsp; </label><input type="text" id="lname" name="lname"size="26pt"></p>
-        <label for="grads">Grāds:&nbsp; </label><input type="text" id="grads" name="grads"size="30pt"></p>
-        <label for="telnr">Telefona numurs: &nbsp; </label><input type="text" id="telnr" name="telnr"size="19pt"></form></p>
-        <p>
+<body>
+    <p>
+    <form>
+        <label for="personid">Personas ID:&nbsp; </label><input type="text" id="personid" name="personid" size="24pt">
+        </p>
+
+        <label for="vel_strada">Vēl strādā:&nbsp; </label><input type="checkbox" id="vel_strada" name="vel_strada"
+            size="24pt"></p>
+        <label for="radit">Rādīt:&nbsp; </label><input type="checkbox" id="radit" name="radit" size="24pt"></p>
+        <label for="zp">ZP:&nbsp; </label><input type="checkbox" id="zp" name="zp" size="24pt"></p>
+
+        <label for="fname">Name:&nbsp; </label><input type="text" id="fname" name="fname" size="30pt"></p>
+        <label for="lname">Last name:&nbsp; </label><input type="text" id="lname" name="lname" size="26pt"></p>
+        <label for="grads">Grāds:&nbsp; </label><input type="text" id="grads" name="grads" size="30pt"></p>
+        <label for="telnr">Telefona numurs: &nbsp; </label><input type="text" id="telnr" name="telnr" size="19pt">
+    </form>
+    </p>
+    <p>
         <label for="amats">Amata veids 1:&nbsp; </label>
-        <select name="amats" id="amats" class = "amats"></select>
-        </p>
-        <p>
+        <select name="amats" id="amats" class="amats"></select>
+    </p>
+    <p>
         <label for="struktura">Struktūrvienības veids 1:&nbsp; </label>
-        <select name="struktura" id="struktura" class = "str"></select>
-        </p>
-        <label for="amats2">Amata veids 2:&nbsp; </label>
-        <select name="amats2" id="amats2" class = "amats2"></select>
-        </p>
-        <p>
+        <select name="struktura" id="struktura" class="str"></select>
+    </p>
+    <label for="amats2">Amata veids 2:&nbsp; </label>
+    <select name="amats2" id="amats2" class="amats2"></select>
+    </p>
+    <p>
         <label for="struktura2">Struktūrvienības veids:&nbsp; </label>
-        <select name="struktura2" id="struktura2" class = "str2"></select>
-        </p>
-        <label for="amats3">Amata veids 3:&nbsp; </label>
-        <select name="amats3" id="amats3" class = "amats3"></select>
-        </p>
-        <p>
+        <select name="struktura2" id="struktura2" class="str2"></select>
+    </p>
+    <label for="amats3">Amata veids 3:&nbsp; </label>
+    <select name="amats3" id="amats3" class="amats3"></select>
+    </p>
+    <p>
         <label for="struktura3">Struktūrvienības veids 3:&nbsp; </label>
-        <select name="struktura3" id="struktura3" class = "str3"></select>
-        </p>
-        <button onclick=test_print()>Pievienot</button>
+        <select name="struktura3" id="struktura3" class="str3"></select>
+    </p>
+    <button onclick=test_print()>Pievienot</button>
 </body>
 
 </html>

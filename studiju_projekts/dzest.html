@@ -2,38 +2,36 @@
 <html>
 
 <head>
-<h1>Dzēšana (vajag 2 files, lai nav dorpdown)</h1>
+    <h1>Dzēšana (vajag 2 files, lai nav dropdown)</h1>
 
+    <script>
+        function myFunction() {
+            var select = document.getElementById('delete');
+            var option = select.options[select.selectedIndex];
 
-<script>
-    function myFunction() {
-    var select = document.getElementById('delete');
-    var option = select.options[select.selectedIndex];
-    
-    //document.getElementById("value").value=option.value;
-    
-    if (option.value == "strukturvieniba"){
-        var srtuktid=prompt("Ievadiet struktūrvienības ID");
-    }else if(option.value == "personals"){
-        var persid=prompt("Ievadiet personāla ID");
-    }
-        
-    }
-		
-    </script> 
+            //document.getElementById("value").value=option.value;
 
+            if (option.value == "strukturvieniba") {
+                var srtuktid = prompt("Ievadiet struktūrvienības ID");
+            } else if (option.value == "personals") {
+                var persid = prompt("Ievadiet personāla ID");
+            }
+
+        }
+
+    </script>
 
 </head>
 
 <body>
-<form>
-    <label for="delete">Dzēst</label>
-    <select name="delete" id="delete" onchange="myFunction()">
-        <option value="empty" selected></option>
-        <option value="strukturvieniba">Struktūrvienība</option>
-        <option value="personals">Personāls</option>
-    </select>
-</form>
+    <form>
+        <label for="delete">Dzēst</label>
+        <select name="delete" id="delete" onchange="myFunction()">
+            <option value="empty" selected></option>
+            <option value="strukturvieniba">Struktūrvienība</option>
+            <option value="personals">Personāls</option>
+        </select>
+    </form>
 </body>
 
 </html>

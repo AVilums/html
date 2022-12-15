@@ -2,86 +2,86 @@
 <html>
 
 <head>
-<script type = "text/javascript" src="csv.js"></script> 
-<h1>Struktūrvienības izvade:</h1>
+    <script type="text/javascript" src="csv.js"></script>
+    <h1>Struktūrvienības izvade:</h1>
 
-<form id="myForm">
-    <label for="csvFile">Pievienojiet <b>stukturvienibas.csv</b> failus</label>
-    <input type="file" id="csvFile" accept=".csv"/>
-    <br/>
-</form>
+    <form id="myForm">
+        <label for="csvFile">Pievienojiet <b>stukturvienibas.csv</b> failus</label>
+        <input type="file" id="csvFile" accept=".csv" />
+        <br />
+    </form>
 
-<script>
+    <script>
 
-    var d1 = "!";  //atdala masīva rindas
-    var d2 = ",";  //atdala masīva elementus rindā
+        var d1 = "!";  //atdala masīva rindas
+        var d2 = ",";  //atdala masīva elementus rindā
 
-    let strukturasViss;  //viss fails 2d masīvā
+        let strukturasViss;  //viss fails 2d masīvā
 
-    const struktura = []; // struktūru nosaukumu masīvs
-    const strukturaId = []; //struktūru id masīvs
+        const struktura = []; // struktūru nosaukumu masīvs
+        const strukturaId = []; //struktūru id masīvs
 
-    function readFileAsText(file){
-        return new Promise(function(resolve,reject){
-            let fr = new FileReader();
-                
-            fr.onload = function() {
-                resolve(fr.result);
-            };
+        function readFileAsText(file) {
+            return new Promise(function (resolve, reject) {
+                let fr = new FileReader();
 
-            fr.onerror = function() {
-                reject(fr);
-            };
+                fr.onload = function () {
+                    resolve(fr.result);
+                };
 
-            fr.readAsText(file);
-        });
-    }
-        
-    // Handle multiple fileuploads     
-    document.getElementById("csvFile").addEventListener("change", function(ev) {
-        let files = ev.currentTarget.files;
-        let readers = [];
+                fr.onerror = function () {
+                    reject(fr);
+                };
 
-        // Abort if there were no files selected
-        if(!files.length) return;
-
-        // Store promises in array
-        for(let i = 0;i < files.length;i++){
-            readers.push(readFileAsText(files[i]));
+                fr.readAsText(file);
+            });
         }
-                    
-        Promise.all(readers).then((values) => {
-            
-            let viens = stringTo2dArray(values[0],d1, d2);
 
-            compare(viens);
-        });
-    }, false);
+        // Handle multiple fileuploads     
+        document.getElementById("csvFile").addEventListener("change", function (ev) {
+            let files = ev.currentTarget.files;
+            let readers = [];
 
-    function compare(viens,divi,tris) {
-        if (viens[0][0]=="Str.ID") {
-            forpush(viens);
-        } else { 
-            alert("Izvēlēts nepareizais fails");
-            window.open("pievienots.html", "_self");
-        }          
-    }
-            
-    function forpush(b) {
-        for (let i=1;i<b.length;i++){
-            struktura.push(b[i][1]); //strukturu nosaukumi
-            strukturaId.push(b[i][0]); //strukturu ID nosaukumi
+            // Abort if there were no files selected
+            if (!files.length) return;
+
+            // Store promises in array
+            for (let i = 0; i < files.length; i++) {
+                readers.push(readFileAsText(files[i]));
+            }
+
+            Promise.all(readers).then((values) => {
+
+                let viens = stringTo2dArray(values[0], d1, d2);
+
+                compare(viens);
+            });
+        }, false);
+
+        function compare(viens, divi, tris) {
+            if (viens[0][0] == "Str.ID") {
+                forpush(viens);
+            } else {
+                alert("Izvēlēts nepareizais fails");
+                window.open("pievienots.html", "_self");
+            }
         }
-        strukturasViss=b; 
-    }
-</script> 
+
+        function forpush(b) {
+            for (let i = 1; i < b.length; i++) {
+                struktura.push(b[i][1]); //strukturu nosaukumi
+                strukturaId.push(b[i][0]); //strukturu ID nosaukumi
+            }
+            strukturasViss = b;
+        }
+    </script>
 
 </head>
 
 <body>
-<form>
-<button onclick="arrayToHTML()">Izvadīt</button>
-</form>
+    <form>
+        <button onclick="arrayToHTML()">Izvadīt</button>
+    </form>
 </body>
 
 </html>

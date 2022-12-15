@@ -1,36 +1,40 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <h1>Personāla rediģēšana</h1>
-        
-        <form id="myForm">
-            <label for="csvFile">Pievienojiet <b>amati.csv</b>, <b>stukturvienibas.csv</b>, <b>personals.csv </b>failus</label>
-            <input type="file" id="csvFile" accept=".csv" multiple/>
-        </form>
-        
-        <form id="myForm2">
-            <p><label for="personid">Personas ID:&nbsp; </label><input type="text" id="personid" name="personid"size="30pt"></p>
-            <button type="button" value="Submit" id="pievienot" class="pievienot" onclick="EditFunction()">Submit</button>  
-        </form>
 
-        <style>
-            .amats{
-                width: 146pt;    
-            }
+<head>
+    <h1>Personāla rediģēšana</h1>
 
-            .amats2{
-                width: 130pt;    
-            }
-        
-            .str{
-                width: 100pt;
-            }
-            .str2{
-                width: 84pt;
-            }
-        </style>
-    
-        <script>
+    <form id="myForm">
+        <label for="csvFile">Pievienojiet <b>amati.csv</b>, <b>stukturvienibas.csv</b>, <b>personals.csv
+            </b>failus</label>
+        <input type="file" id="csvFile" accept=".csv" multiple />
+    </form>
+
+    <form id="myForm2">
+        <p><label for="personid">Personas ID:&nbsp; </label><input type="text" id="personid" name="personid"
+                size="30pt"></p>
+        <button type="button" value="Submit" id="pievienot" class="pievienot" onclick="EditFunction()">Submit</button>
+    </form>
+
+    <style>
+        .amats {
+            width: 146pt;
+        }
+
+        .amats2 {
+            width: 130pt;
+        }
+
+        .str {
+            width: 100pt;
+        }
+
+        .str2 {
+            width: 84pt;
+        }
+    </style>
+
+    <script>
 
         var d1 = "!";
         var d2 = ",";
@@ -45,105 +49,105 @@
         const amatiId = [];
         const strukturaId = [];
 
-        function readFileAsText(file){
-                return new Promise(function(resolve,reject){
-                    let fr = new FileReader();
-                    
-                    fr.onload = function(){
-                        resolve(fr.result);
-                    };
+        function readFileAsText(file) {
+            return new Promise(function (resolve, reject) {
+                let fr = new FileReader();
 
-                    fr.onerror = function(){
-                        reject(fr);
-                    };
+                fr.onload = function () {
+                    resolve(fr.result);
+                };
 
-                    fr.readAsText(file);
-                });
+                fr.onerror = function () {
+                    reject(fr);
+                };
+
+                fr.readAsText(file);
+            });
         }
-            
+
         // Handle multiple fileuploads     
-        document.getElementById("csvFile").addEventListener("change", function(ev){
+        document.getElementById("csvFile").addEventListener("change", function (ev) {
             let files = ev.currentTarget.files;
             let readers = [];
 
             // Abort if there were no files selected
-            if(!files.length) return;
+            if (!files.length) return;
 
             // Store promises in array
-            for(let i = 0;i < files.length;i++){
+            for (let i = 0; i < files.length; i++) {
                 readers.push(readFileAsText(files[i]));
             }
-                        
+
             // Trigger Promises
             Promise.all(readers).then((values) => {
                 // Values will be an array that contains an item
                 // with the text of every selected file
                 // ["File1 Content", "File2 Content" ... "FileN Content"]
-                        
+
                 //prieks viendimensiju parbaudes
                 // alert(values[0]);
                 // alert(values[1]);
                 // alert(values[2]);
-                
-                let viens = stringTo2dArray(values[0],d1, d2);
-                let divi = stringTo2dArray(values[1],d1, d2);
-                let tris = stringTo2dArray(values[2],d1, d2);
-                        
+
+                let viens = stringTo2dArray(values[0], d1, d2);
+                let divi = stringTo2dArray(values[1], d1, d2);
+                let tris = stringTo2dArray(values[2], d1, d2);
+
                 //prieks divdimensiju parbaudes
                 //alert(viens[0][0]+"\n"+divi[0][0]+"\n"+tris[0][0]);
-                compare(viens,divi,tris);
+                compare(viens, divi, tris);
             });
         }, false);
-        
+
         function stringTo2dArray(string, d1, d2) {
-            return string.split(d1).map(function(x){return x.split(d2)});
+            return string.split(d1).map(function (x) { return x.split(d2) });
         }
-                    
-        function compare(viens,divi,tris){
-                
-            if (viens[0][0]=="Am.ID" && divi[0][0]=="Str.ID" && tris[0][0]=="ID") {
-                forpush(viens,divi,tris); 
-            }else if (viens[0][0]=="Str.ID" && divi[0][0]=="Am.ID" && tris[0][0]=="ID"){
-                forpush(divi,viens,tris);
-            }else if (viens[0][0]=="ID" && divi[0][0]=="Str.ID" && tris[0][0]=="Am.ID"){
-                forpush(tris,divi,viens);
-            }else if (viens[0][0]=="ID" && divi[0][0]=="Am.ID" && tris[0][0]=="Str.ID"){
-                forpush(divi,tris,viens);
-            }else if (viens[0][0]=="Am.ID" && divi[0][0]=="ID" && tris[0][0]=="Str.ID"){
-                forpush(viens,tris,divi);
-            }else if (viens[0][0]=="Str.ID" && divi[0][0]=="ID" && tris[0][0]=="Am.ID"){
-                forpush(tris,viens,divi);
-            }else{ 
+
+        function compare(viens, divi, tris) {
+
+            if (viens[0][0] == "Am.ID" && divi[0][0] == "Str.ID" && tris[0][0] == "ID") {
+                forpush(viens, divi, tris);
+            } else if (viens[0][0] == "Str.ID" && divi[0][0] == "Am.ID" && tris[0][0] == "ID") {
+                forpush(divi, viens, tris);
+            } else if (viens[0][0] == "ID" && divi[0][0] == "Str.ID" && tris[0][0] == "Am.ID") {
+                forpush(tris, divi, viens);
+            } else if (viens[0][0] == "ID" && divi[0][0] == "Am.ID" && tris[0][0] == "Str.ID") {
+                forpush(divi, tris, viens);
+            } else if (viens[0][0] == "Am.ID" && divi[0][0] == "ID" && tris[0][0] == "Str.ID") {
+                forpush(viens, tris, divi);
+            } else if (viens[0][0] == "Str.ID" && divi[0][0] == "ID" && tris[0][0] == "Am.ID") {
+                forpush(tris, viens, divi);
+            } else {
                 alert("Izvēlēti nepareizi faili");
                 window.open("Main.html", "_parent");
             }
-                    
+
         }
-            
-        function forpush(a,b,c){
-            
-            for (let i=1;i<a.length;i++){
+
+        function forpush(a, b, c) {
+
+            for (let i = 1; i < a.length; i++) {
                 amati.push(a[i][1]); //amatu nosaukumi
                 amatiId.push(a[i][0]); //amatu ID nosaukumi
-            } 
-                    
-            for (let i=1;i<b.length;i++){
+            }
+
+            for (let i = 1; i < b.length; i++) {
                 struktura.push(b[i][1]); //strukturu nosaukumi
                 strukturaId.push(b[i][0]); //strukturu ID nosaukumi
             }
-                    
-            for (let i=1;i<c.length;i++){
-                personals.push(c[i][0]);   //personala id nosaukumi
-            } 
 
-            amatiViss=a;  //Visu amatu masivs
-            strukturasViss=b; //Visu  strukturas masivs 
-            personalsViss=c; //Visu personals masivs
-            GFG_Fun(amati,struktura,personals);
-        } 
-            
-        function GFG_Fun(amati,struktura,personals){
-            
+            for (let i = 1; i < c.length; i++) {
+                personals.push(c[i][0]);   //personala id nosaukumi
+            }
+
+            amatiViss = a;  //Visu amatu masivs
+            strukturasViss = b; //Visu  strukturas masivs 
+            personalsViss = c; //Visu personals masivs
+            GFG_Fun(amati, struktura, personals);
+        }
+
+        function GFG_Fun(amati, struktura, personals) {
+
             var select = document.getElementById("amats");
             var select2 = document.getElementById("struktura");
             var select3 = document.getElementById("amats2");
@@ -151,7 +155,7 @@
             var select5 = document.getElementById("amats3");
             var select6 = document.getElementById("struktura3");
 
-            for(var i = 0; i < amati.length; i++) {
+            for (var i = 0; i < amati.length; i++) {
                 var opt = amati[i];
                 var el = document.createElement("option");
                 el.textContent = opt;
@@ -164,7 +168,7 @@
                 var el5 = document.createElement("option");
                 el5.textContent = opt;
                 el5.value = opt;
-        
+
                 select.appendChild(el);
                 select3.appendChild(el3);
                 select5.appendChild(el5);
@@ -172,7 +176,7 @@
             }
 
             //analogs otra dropdown aizpildei
-            for(var i = 0; i < struktura.length; i++) {
+            for (var i = 0; i < struktura.length; i++) {
                 var opt2 = struktura[i];
                 var el2 = document.createElement("option");
                 el2.textContent = opt2;
@@ -190,100 +194,105 @@
                 select4.appendChild(el4);
                 select6.appendChild(el6);
             }
-        }       
+        }
 
-        function EditFunction(){
-            var personid=document.getElementById("personid").value;
+        function EditFunction() {
+            var personid = document.getElementById("personid").value;
             //alert(personid);
-            
-            var x=0;  //rinda kurā atrodas personāla id
-            var y=0;  //rinda kurā atrodas amata id atkarība no ID (pesonala)
-            var z=0;  //rinda kurā atrodas sturktūrvienība id atkarība no ID (pesonala)
-            var y2=0;  
-            var z2=0;
-            var y3=0;
-            var z3=0;
-            for (var i=0;i<personals.length;i++){
-                if(parseInt(personid)==parseInt(personals[i])){
-                x=i+1;
+
+            var x = 0;  //rinda kurā atrodas personāla id
+            var y = 0;  //rinda kurā atrodas amata id atkarība no ID (pesonala)
+            var z = 0;  //rinda kurā atrodas sturktūrvienība id atkarība no ID (pesonala)
+            var y2 = 0;
+            var z2 = 0;
+            var y3 = 0;
+            var z3 = 0;
+            for (var i = 0; i < personals.length; i++) {
+                if (parseInt(personid) == parseInt(personals[i])) {
+                    x = i + 1;
                 }
             }
 
-            for (var i=0;i<amatiId.length;i++){
-                if(personalsViss[x][14].trim()==amatiId[i].trim()){
-                    y=i; 
+            for (var i = 0; i < amatiId.length; i++) {
+                if (personalsViss[x][14].trim() == amatiId[i].trim()) {
+                    y = i;
                 }
-                if(personalsViss[x][16].trim()==amatiId[i].trim()){
-                    y2=i;
+                if (personalsViss[x][16].trim() == amatiId[i].trim()) {
+                    y2 = i;
                 }
-                if(personalsViss[x][18].trim()==amatiId[i].trim()){
-                    y3=i;
+                if (personalsViss[x][18].trim() == amatiId[i].trim()) {
+                    y3 = i;
                 }
             }
 
-            for (var i=0;i<strukturaId.length;i++){
-                if(personalsViss[x][13].trim()==strukturaId[i].trim()){
-                    z=i;
+            for (var i = 0; i < strukturaId.length; i++) {
+                if (personalsViss[x][13].trim() == strukturaId[i].trim()) {
+                    z = i;
                 }
-                if(personalsViss[x][15].trim()==strukturaId[i].trim()){
-                    z2=i;
+                if (personalsViss[x][15].trim() == strukturaId[i].trim()) {
+                    z2 = i;
                 }
-                if(personalsViss[x][17].trim()==strukturaId[i].trim()){
-                    z3=i;
+                if (personalsViss[x][17].trim() == strukturaId[i].trim()) {
+                    z3 = i;
                 }
             }
             //amatiId
             //jaizvada 88
             //personalsViss[x][14] kur atrodas amats
 
-            document.getElementById("fname").value=personalsViss[x][6];
-            document.getElementById("lname").value=personalsViss[x][8];
-            document.getElementById("grads").value=personalsViss[x][10];
-            document.getElementById("telnr").value=personalsViss[x][12];
+            document.getElementById("fname").value = personalsViss[x][6];
+            document.getElementById("lname").value = personalsViss[x][8];
+            document.getElementById("grads").value = personalsViss[x][10];
+            document.getElementById("telnr").value = personalsViss[x][12];
 
-            document.getElementById('amats').getElementsByTagName('option')[y].selected = 'selected' ; //izvada amats 1selected
-            document.getElementById('struktura').getElementsByTagName('option')[z].selected = 'selected'  ;//izvada amats 1selected
-       
-            document.getElementById('amats2').getElementsByTagName('option')[y2].selected = 'selected' ; //izvada amats 1selected
-            document.getElementById('struktura2').getElementsByTagName('option')[z2].selected = 'selected'  ;//izvada amats 1selected
-        
-            document.getElementById('amats3').getElementsByTagName('option')[y3].selected = 'selected' ; //izvada amats 1selected
-            document.getElementById('struktura3').getElementsByTagName('option')[z3].selected = 'selected'  ;//izvada amats 1selected
-        }  
-        
-        </script>
-        
-        <h1>Personāla redigēšana</h1>
-    </head>
-    <body>
-        <p><form><label for="fname">Name:&nbsp; </label><input type="text" id="fname" name="fname"size="30pt"></p>
-            <label for="lname">Last name:&nbsp; </label><input type="text" id="lname" name="lname"size="26pt"></p>
-            <label for="grads">Grāds:&nbsp; </label><input type="text" id="grads" name="grads"size="30pt"></p>
-            <label for="telnr">Telefona numurs: &nbsp; </label><input type="text" id="telnr" name="telnr"size="19pt"></form></p>
-            <p>
-            <label for="amats">Amata veids:&nbsp; </label>
-            <select name="amats" id="amats" class = "amats"></select>
-            </p>
-            <p>
-            <label for="amats2">Amata veids (2):&nbsp; </label>
-            <select name="amats2" id="amats2" class = "amats2"></select>
-            </p>
-            <p>
-            <label for="amats3">Amata veids (3):&nbsp; </label>
-            <select name="amats3" id="amats3" class = "amats2"></select>
-            </p>
-            <p>
-            <label for="struktura">Struktūrvienības veids:&nbsp; </label>
-            <select name="struktura" id="struktura" class = "str"></select>
-            </p>
-            <p>
-            <label for="struktura2">Struktūrvienības veids (2):&nbsp; </label>
-            <select name="struktura2" id="struktura2" class = "str2"></select>
-            </p>
-            <p>
-            <label for="struktura3">Struktūrvienības veids (3):&nbsp; </label>
-            <select name="struktura3" id="struktura3" class = "str2"></select>
-            </p>
-            <button onclick="submitOnClick()">Rediģēt/saglabāt</button>
-    </body>
+            document.getElementById('amats').getElementsByTagName('option')[y].selected = 'selected'; //izvada amats 1selected
+            document.getElementById('struktura').getElementsByTagName('option')[z].selected = 'selected';//izvada amats 1selected
+
+            document.getElementById('amats2').getElementsByTagName('option')[y2].selected = 'selected'; //izvada amats 1selected
+            document.getElementById('struktura2').getElementsByTagName('option')[z2].selected = 'selected';//izvada amats 1selected
+
+            document.getElementById('amats3').getElementsByTagName('option')[y3].selected = 'selected'; //izvada amats 1selected
+            document.getElementById('struktura3').getElementsByTagName('option')[z3].selected = 'selected';//izvada amats 1selected
+        }
+
+    </script>
+
+    <h1>Personāla redigēšana</h1>
+</head>
+
+<body>
+    <p>
+    <form><label for="fname">Name:&nbsp; </label><input type="text" id="fname" name="fname" size="30pt"></p>
+        <label for="lname">Last name:&nbsp; </label><input type="text" id="lname" name="lname" size="26pt"></p>
+        <label for="grads">Grāds:&nbsp; </label><input type="text" id="grads" name="grads" size="30pt"></p>
+        <label for="telnr">Telefona numurs: &nbsp; </label><input type="text" id="telnr" name="telnr" size="19pt">
+    </form>
+    </p>
+    <p>
+        <label for="amats">Amata veids:&nbsp; </label>
+        <select name="amats" id="amats" class="amats"></select>
+    </p>
+    <p>
+        <label for="amats2">Amata veids (2):&nbsp; </label>
+        <select name="amats2" id="amats2" class="amats2"></select>
+    </p>
+    <p>
+        <label for="amats3">Amata veids (3):&nbsp; </label>
+        <select name="amats3" id="amats3" class="amats2"></select>
+    </p>
+    <p>
+        <label for="struktura">Struktūrvienības veids:&nbsp; </label>
+        <select name="struktura" id="struktura" class="str"></select>
+    </p>
+    <p>
+        <label for="struktura2">Struktūrvienības veids (2):&nbsp; </label>
+        <select name="struktura2" id="struktura2" class="str2"></select>
+    </p>
+    <p>
+        <label for="struktura3">Struktūrvienības veids (3):&nbsp; </label>
+        <select name="struktura3" id="struktura3" class="str2"></select>
+    </p>
+    <button onclick="submitOnClick()">Rediģēt/saglabāt</button>
+</body>
+
 </html>
