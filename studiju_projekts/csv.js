@@ -8,7 +8,6 @@ function makeTableHTML(myArray) {
         result += "</tr>";
     }
     result += "</table>";
-
     return result;
 }
 

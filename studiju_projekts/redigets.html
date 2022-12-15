@@ -2,19 +2,86 @@
 <html>
 
 <head>
+    <script type="text/javascript" src="csv.js"></script>
+    <script type="text/javascript" src="file.js"></script>
+    <h1>Izvēlieties darba failu:</h1>
+
+    <form id="myForm">
+        <label for="csvFile">Pievienojiet <b>stukturvienibas.csv</b> failu </label>
+        <input type="file" id="csvFile" accept=".csv" />
+    </form>
+
+    <form id="myForm2">
+        <p><label for="struktid">Struktūrvinības ID:&nbsp; </label><input type="text" id="struktid" name="struktid"
+                size="35pt"></p>
+        <button type="button" value="Submit" id="pievienot" class="pievienot" onclick="EditFunction()">Submit</button>
+    </form>
+
     <h1>Struktūrvienības rediģēšana</h1>
     <script>
+        
+        let strukturasViss;  //viss fails 2d masīvā
+
+        const struktura = []; // struktūru nosaukumu masīvs
+        const strukturaId = []; //struktūru id masīvs
+
+        // Handle multiple fileuploads     
+        document.getElementById("csvFile").addEventListener("change", function (ev) {
+            let files = ev.currentTarget.files;
+            let readers = [];
+
+            // Abort if there were no files selected
+            if (!files.length) return;
+
+            // Store promises in array
+            for (let i = 0; i < files.length; i++) {
+                readers.push(readFileAsText(files[i]));
+            }
+
+            Promise.all(readers).then((values) => {
+
+                let viens = stringTo2dArray(values[0], "!", ",");
+
+                compare(viens);
+            });
+        }, false);
+
+        function compare(viens, divi, tris) {
+            if (viens[0][0] == "Str.ID") {
+                strukturasViss = forpush(viens);
+            } else {
+                alert("Izvēlēts nepareizais fails");
+                window.open("redigets.html", "_self");
+            }
+
+        }
+        Print();
+        function EditFunction() {
+            var struktid = document.getElementById("struktid").value;
+            //alert(struktid);
+
+            var x = 0;  //rinda kurā atrodas struktūras id
+
+            for (var i = 0; i < strukturaId.length + 1; i++) {
+                if (struktid.trim() == strukturasViss[i][0].trim()) {
+                    x = i;
+                    //alert(x);
+                }
+            }
+
+            document.getElementById("strukturname").value = strukturasViss[x][1];
+            document.getElementById("strukturnameen").value = strukturasViss[x][2];
+        }
 
     </script>
 </head>
 
 <body>
-    <form><label for="stukturasid">Struktūrvienības ID: </label><input type="text" id="stukturasid" name="stukturasid"
-            size="24pt"></p>
+    <form>
         <p><label for="strukturname">Struktūrvienības nosaukums: </label><input type="text" id="strukturname"
-                name="strukturname" size="16pt"></p>
+                name="strukturname" size="26pt"></p>
         <p><label for="strukturnameen">Name of structure: </label><input type="text" id="strukturnameen"
-                name="strukturnameen" size="26pt"></p>
+                name="strukturnameen" size="36pt"></p>
         <button onclick="submitOnClick()">Rediģēt/Saglabāt</button>
     </form>
 </body>
