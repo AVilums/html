@@ -13,29 +13,10 @@
 
     <script>
 
-        var d1 = "!";  //atdala masīva rindas
-        var d2 = ",";  //atdala masīva elementus rindā
-
         let strukturasViss;  //viss fails 2d masīvā
 
         const struktura = []; // struktūru nosaukumu masīvs
         const strukturaId = []; //struktūru id masīvs
-
-        function readFileAsText(file) {
-            return new Promise(function (resolve, reject) {
-                let fr = new FileReader();
-
-                fr.onload = function () {
-                    resolve(fr.result);
-                };
-
-                fr.onerror = function () {
-                    reject(fr);
-                };
-
-                fr.readAsText(file);
-            });
-        }
 
         // Handle multiple fileuploads     
         document.getElementById("csvFile").addEventListener("change", function (ev) {
@@ -52,7 +33,7 @@
 
             Promise.all(readers).then((values) => {
 
-                let viens = stringTo2dArray(values[0], d1, d2);
+                let viens = stringTo2dArray(values[0], "!", ",");
 
                 compare(viens);
             });
@@ -67,13 +48,6 @@
             }
         }
 
-        function forpush(b) {
-            for (let i = 1; i < b.length; i++) {
-                struktura.push(b[i][1]); //strukturu nosaukumi
-                strukturaId.push(b[i][0]); //strukturu ID nosaukumi
-            }
-            strukturasViss = b;
-        }
     </script>
 
 </head>
