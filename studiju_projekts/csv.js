@@ -26,5 +26,5 @@ function forpush(b) {
         struktura.push(b[i][1]); //strukturu nosaukumi
         strukturaId.push(b[i][0]); //strukturu ID nosaukumi
     }
-    myArray = b;
+    strukturasViss = b;
 }

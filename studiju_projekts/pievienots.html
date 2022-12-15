@@ -2,41 +2,23 @@
 <html>
 
 <head>
+    <script type="text/javascript" src="csv.js"></script>
+    <script type="text/javascript" src="file.js"></script>
 
     <h1>Izvēlēties darba failus:</h1>
 
     <form id="myForm">
         <label for="csvFile">Pievienojiet <b>stukturvienibas.csv</b> failus</label>
         <input type="file" id="csvFile" accept=".csv" />
-        <br />
+        <br/>
     </form>
 
     <h1>Stuktūrvienības pievienošana</h1>
     <script>
-
-        var d1 = "!";  //atdala masīva rindas
-        var d2 = ",";  //atdala masīva elementus rindā
-
-        let strukturasViss;  //viss fails 2d masīvā
+        var strukturasViss;  //viss fails 2d masīvā
 
         const struktura = []; // struktūru nosaukumu masīvs
         const strukturaId = []; //struktūru id masīvs
-
-        function readFileAsText(file) {
-            return new Promise(function (resolve, reject) {
-                let fr = new FileReader();
-
-                fr.onload = function () {
-                    resolve(fr.result);
-                };
-
-                fr.onerror = function () {
-                    reject(fr);
-                };
-
-                fr.readAsText(file);
-            });
-        }
 
         // Handle multiple fileuploads     
         document.getElementById("csvFile").addEventListener("change", function (ev) {
@@ -52,39 +34,19 @@
             }
 
             Promise.all(readers).then((values) => {
-
-                let viens = stringTo2dArray(values[0], d1, d2);
-
+                let viens = stringTo2dArray(values[0], "!", ",");
                 compare(viens);
             });
+
         }, false);
 
-        function stringTo2dArray(string, d1, d2) {
-            return string.split(d1).map(function (x) { return x.split(d2) });
-        }
-
         function compare(viens, divi, tris) {
-
             if (viens[0][0] == "Str.ID") {
                 forpush(viens);
             } else {
                 alert("Izvēlēts nepareizais fails");
                 window.open("pievienots.html", "_self");
             }
-
-        }
-
-        function forpush(b) {
-
-            for (let i = 1; i < b.length; i++) {
-                struktura.push(b[i][1]); //strukturu nosaukumi
-                strukturaId.push(b[i][0]); //strukturu ID nosaukumi
-            }
-
-            strukturasViss = b; //Visu  strukturas masivs 
-
-            //arrayToCSV(strukturasViss);
-            //document.write(strukturasViss);
         }
 
         function arrayToCSV() {
@@ -106,9 +68,9 @@
                 csvRows[i] = temp;
             }
 
-            // for (let i=0; i < csvRows.length; i++) {
-            //     alert(csvRows[i]);
-            // }
+            for (let i=0; i < csvRows.length; i++) {
+                alert(csvRows[i]);
+            }
 
             var universalBOM = "\uFEFF";
 
@@ -121,47 +83,9 @@
             link.setAttribute("download", "strukturvienibas.csv");
             document.body.appendChild(link);
             link.click();
-
-
-            // var encodedUri = encodeURI(csvContent);
-            // window.open(encodedUri);
-            //alert(csvContent);
-            // // (B) WRITE TO FILE
-            // const fs = require("fs");
-            // alert("1");
-            // const stream = fs.createWriteStream("write.csv");
-            // alert("2");
-            // for (let i of csvRows) { 
-            //     stream.write(i.join(",") + "\r\n"); 
-            // }
-            // alert("3");
-            // stream.end();
-            // alert("Done!");
-
-            //alert(csvRows[0]);
-
-            //document.write(csvRows);
-            // for (var i = 0; i < twoDiArray.length; ++i) {
-            //     for (var j = 0; j < twoDiArray[i].length; ++j) {
-            //         twoDiArray[i][j] = '\"' + twoDiArray[i][j] + '\"';  // Handle elements that contain commas
-            //     }
-            //     csvRows.push(twoDiArray[i].join(','));
-            // }
-
-            // var csvString = csvRows.join('\r\n');
-            // var a         = document.createElement('a');
-            // a.href        = 'data:attachment/csv,' + csvString;
-            // a.target      = '_blank';
-            // a.download    = 'myFile.csv';
-
-            // document.body.appendChild(a);
-            // a.click();
-            // Optional: Remove <a> from <body> after done
         }
-
-            //let dataTo1dArr = [];
-
     </script>
+
 </head>
 
 <body>
