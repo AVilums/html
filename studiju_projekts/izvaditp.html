@@ -40,31 +40,23 @@
 
         function submitOnClick() {
             let choice = document.getElementById("izvadit").value;
-            
-            alert(personalsViss[2][0]); // ID
-            
-            const tempArr = [[],[]];
-            let x = 0;
+            let personals_len = personalsViss.length;
+
+            var tempArr = [];
+            tempArr.push(["Grāds", "Vārds", "Uzvārds", 
+            "Struktūrvienība 1", "S 2", "S 3",
+            "Amats 1", "A 2", "A 3", "Telefona Nr."]);
 
             for (let i = 1; i < personalsViss.length; i++) {
-                alert("HERE1");
-                for (let j = 0; j < personalsViss.length; j++) {
-                    alert("HERE2");
-                    tempArr[x][0] = personalsViss[i][0];    
-                    alert(tempArr[x][0]);
-                }
-                x++;
+                tempArr.push([personalsViss[i][10], personalsViss[i][7], personalsViss[i][9],
+                personalsViss[i][13], personalsViss[i][15], personalsViss[i][17],
+                personalsViss[i][14], personalsViss[i][16], personalsViss[i][18], personalsViss[i][12]]);
             }
-
-            // arrayToHTML()
             
-            // If choice = strukturvieniba Then
-            // Grāds | Vārds | Uzvārds | Struktūrvienība(1-3) | Amats(1-3) | Kontaktinformācija
+            tempArr.splice(personalsViss.length - 1, 1); // removes undefined row(?)
 
-            // Else if choice = uzvards Then 
-            // Grāds | Vārds | Uzvārds | Amats(1-3) | Kontaktinformācija
-
-            alert(choice);
+            var table = makeTableHTML(tempArr);
+            document.write(table);
         }
 
     </script>
