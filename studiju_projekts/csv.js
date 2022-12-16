@@ -29,3 +29,30 @@ function forpush(b) {
 
     return myArray;
 }
+
+function compareToStrukturvieniba(viens) {
+    if (viens[0][0] == "Str.ID") {
+        strukturasViss = forpush(viens);
+    } else {
+        alert("Izvēlēts nepareizais fails");
+        window.open("pievienots.html", "_self");
+    }
+}
+
+function compareToPersonals(viens) {
+    if (viens[0][0] == "ID") {
+        personalsViss = forpush(viens);
+    } else {
+        alert("Izvēlēts nepareizais fails");
+        window.open("pievienots.html", "_self");
+    }
+}
+
+function compareToAmati(viens) {
+    if (viens[0][0] == "Am.ID") {
+        amatiViss = forpush(viens);
+    } else {
+        alert("Izvēlēts nepareizais fails");
+        window.open("pievienots.html", "_self");
+    }
+}

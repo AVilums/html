@@ -4,6 +4,7 @@
 <head>
     <script type="text/javascript" src="csv.js"></script>
     <script type="text/javascript" src="file.js"></script>
+    
     <h1>Struktūrvienības izvade:</h1>
 
     <form id="myForm">
@@ -24,30 +25,18 @@
             let files = ev.currentTarget.files;
             let readers = [];
 
-            // Abort if there were no files selected
             if (!files.length) return;
 
-            // Store promises in array
             for (let i = 0; i < files.length; i++) {
                 readers.push(readFileAsText(files[i]));
             }
 
             Promise.all(readers).then((values) => {
-
+                checkFileAmount(values, 1);  
                 let viens = stringTo2dArray(values[0], "!", ",");
-
-                compare(viens);
+                compareToStrukturvieniba(viens);
             });
         }, false);
-
-        function compare(viens, divi, tris) {
-            if (viens[0][0] == "Str.ID") {
-                strukturasViss = forpush(viens);
-            } else {
-                alert("Izvēlēts nepareizais fails");
-                window.open("pievienots.html", "_self");
-            }
-        }
 
     </script>
 

@@ -6,7 +6,7 @@
     <h1>Izvēlēties darba failus:</h1>
 
     <form id="myForm">
-        <label for="csvFile">Pievienojiet <b>amati.csv</b>, <b>presonals.csv</b> un <b>stukturvienibas.csv</b> failus</label>
+        <label for="csvFile">Pievienojiet <b>amati.csv</b>, <b>personals.csv</b> un <b>strukturvienibas.csv</b> failus</label>
         <input type="file" id="csvFile" accept=".csv" multiple/>
         <br />
     </form>
@@ -50,58 +50,21 @@
                 
         // Trigger Promises
         Promise.all(readers).then((values) => {
-            // Values will be an array that contains an item
-            // with the text of every selected file
-            // ["File1 Content", "File2 Content" ... "FileN Content"]
-                    
-            //prieks viendimensiju parbaudes
-            // alert(values[0]);
-            // alert(values[1]);
-            // alert(values[2]);
+            checkFileAmount(values, 3);                         // file.js
 
-            if(values.length != 3){
-                alert("Nav izvēlēti 3 faili");
-                window.open("pievienotp.html", "_self");
-            }
-        
             let viens = stringTo2dArray(values[0],"!", ",");
             let divi = stringTo2dArray(values[1],"!", ",");
             let tris = stringTo2dArray(values[2],"!", ",");
                    
-            //prieks divdimensiju parbaudes
-            //alert(viens[0][0]+"\n"+divi[0][0]+"\n"+tris[0][0]);
-            compare(viens,divi,tris);
+            compareThreeFiles(viens,divi,tris);                 // file.js
         });
     }, false);
  
     const amati = [];
     const struktura = [];
     const personals = [];
-            
-    function compare(viens,divi,tris){
-        
-        if (viens[0][0]=="Am.ID" && divi[0][0]=="Str.ID" && tris[0][0]=="ID") {
-            forpush(viens,divi,tris); 
-        }else if (viens[0][0]=="Str.ID" && divi[0][0]=="Am.ID" && tris[0][0]=="ID"){
-            forpush(divi,viens,tris);
-        }else if (viens[0][0]=="ID" && divi[0][0]=="Str.ID" && tris[0][0]=="Am.ID"){
-            forpush(tris,divi,viens);
-        }else if (viens[0][0]=="ID" && divi[0][0]=="Am.ID" && tris[0][0]=="Str.ID"){
-            forpush(divi,tris,viens);
-        }else if (viens[0][0]=="Am.ID" && divi[0][0]=="ID" && tris[0][0]=="Str.ID"){
-            forpush(viens,tris,divi);
-        }else if (viens[0][0]=="Str.ID" && divi[0][0]=="ID" && tris[0][0]=="Am.ID"){
-            forpush(tris,viens,divi);
-        }else{ 
-            alert("Izvēlēti nepareizi faili");
-            window.open("pievienotp.html", "_self");
-        }
-            //alert(amati);
-            //alert(struktura);
-            //alert(personals)
-    }
-    
-    function forpush(a,b,c){
+
+    function forpush(a,b,c) {
         for (let i=1;i<a.length;i++){
             amati.push(a[i][1]);
         } 
@@ -117,9 +80,6 @@
         amatiViss=a;
         strukturasViss=b;
         personalsViss=c;
-            //alert(amati);
-            //alert(struktura);
-            //alert(personals);
             
         GFG_Fun(amati,struktura,personals);
     }
