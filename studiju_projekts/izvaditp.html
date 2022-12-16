@@ -43,18 +43,33 @@
             let personals_len = personalsViss.length;
 
             var tempArr = [];
-            tempArr.push(["Grāds", "Vārds", "Uzvārds", 
-            "Struktūrvienība 1", "S 2", "S 3",
-            "Amats 1", "A 2", "A 3", "Telefona Nr."]);
-
-            for (let i = 1; i < personalsViss.length; i++) {
-                tempArr.push([personalsViss[i][10], personalsViss[i][7], personalsViss[i][9],
-                personalsViss[i][13], personalsViss[i][15], personalsViss[i][17],
-                personalsViss[i][14], personalsViss[i][16], personalsViss[i][18], personalsViss[i][12]]);
-            }
             
-            tempArr.splice(personalsViss.length - 1, 1); // removes undefined row(?)
+            if (choice == "strukturvieniba") { 
+                tempArr.push(["Grāds", "Vārds", "Uzvārds", 
+                "Struktūrvienība 1", "S 2", "S 3",
+                "Amats 1", "A 2", "A 3", "Telefona Nr."]);
 
+                for (let i = 1; i < personalsViss.length; i++) {
+                    tempArr.push([personalsViss[i][10], personalsViss[i][7], personalsViss[i][9],
+                    personalsViss[i][13], personalsViss[i][15], personalsViss[i][17],
+                    personalsViss[i][14], personalsViss[i][16], personalsViss[i][18], personalsViss[i][12]]);
+                }
+                tempArr.splice(personalsViss.length - 1, 1); // removes undefined row(?)
+
+            } else if (choice == "uzvards") {
+                tempArr.push(["Grāds", "Vārds", "Uzvārds", 
+                "Amats 1", "A 2", "A 3", "Telefona Nr."]);
+
+                for (let i = 1; i < personalsViss.length; i++) {
+                    tempArr.push([personalsViss[i][10], personalsViss[i][7], personalsViss[i][9],
+                    personalsViss[i][14], personalsViss[i][16], personalsViss[i][18], personalsViss[i][12]]);
+                }
+                tempArr.splice(personalsViss.length - 1, 1); // removes undefined row(?)        
+            } else if (choice == "empty") {
+                alert("Lūdzu izvēlaties tipu");
+                document.reload();
+            }
+         
             var table = makeTableHTML(tempArr);
             document.write(table);
         }
