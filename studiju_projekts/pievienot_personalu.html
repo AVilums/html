@@ -134,10 +134,9 @@
             }
         }   
     
-    function test_print() { 
+    function onSubmitClick() { 
         let personalsRowCount = personalsViss.length;
-        
-        alert(personalsRowCount);
+        alert("Personals.csv row count: " + personalsRowCount);
     }
     </script>
     
@@ -202,7 +201,7 @@
             <label for="neproj">Nē&nbsp; </label>
             <input type="checkbox" id="neproj" name="neproj" value="neproj">
         </p>
-            <button onclick=test_print()>Pievienot</button>
+            <button onclick=onSubmitClick()>Pievienot</button>
     </form>
 </body>
 
