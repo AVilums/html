@@ -35,7 +35,7 @@ function compareToStrukturvieniba(viens) {
         strukturasViss = forpush(viens);
     } else {
         alert("Izvēlēts nepareizais fails");
-        window.open("pievienots.html", "_self");
+        window.open("pievienot_strukturu.html", "_self");
     }
 }
 
@@ -44,7 +44,7 @@ function compareToPersonals(viens) {
         personalsViss = forpush(viens);
     } else {
         alert("Izvēlēts nepareizais fails");
-        window.open("pievienots.html", "_self");
+        window.open("pievienot_strukturu.html", "_self");
     }
 }
 
