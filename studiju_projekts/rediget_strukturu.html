@@ -1,89 +1,173 @@
 <!DOCTYPE html>
 <html>
+    <head>
 
-<head>
-    <script type="text/javascript" src="csv.js"></script>
-    <script type="text/javascript" src="file.js"></script>
-    <h1>Izvēlieties darba failu:</h1>
+        <h1>Izvēlieties darba failu:</h1>
 
-    <form id="myForm">
-        <label for="csvFile">Pievienojiet <b>stukturvienibas.csv</b> failu </label>
-        <input type="file" id="csvFile" accept=".csv" />
-    </form>
-
-    <form id="myForm2">
-        <p><label for="struktid">Struktūrvinības ID:&nbsp; </label><input type="text" id="struktid" name="struktid"
-                size="35pt"></p>
-        <button type="button" value="Submit" id="pievienot" class="pievienot" onclick="EditFunction()">Submit</button>
-    </form>
+        <form id="myForm">
+            <label for="csvFile">Pievienojiet <b>stukturvienibas.csv</b> failu </label>
+            <input type="file" id="csvFile" accept=".csv"/>
+        </form>
+        
+        <form id="myForm2">
+            <p><label for="struktid">Struktūrvinības ID:&nbsp; </label><input type="text" id="struktid" name="struktid"size="35pt"></p>
+            <button type="button" value="Submit" id="pievienot" class="pievienot" onclick="EditFunction()">Submit</button>  
+        </form>
 
     <h1>Struktūrvienības rediģēšana</h1>
     <script>
-        
+
+        var d1 = "!";  //atdala masīva rindas
+        var d2 = ",";  //atdala masīva elementus rindā
+
         let strukturasViss;  //viss fails 2d masīvā
 
         const struktura = []; // struktūru nosaukumu masīvs
         const strukturaId = []; //struktūru id masīvs
 
+        function readFileAsText(file){
+            return new Promise(function(resolve,reject){
+                let fr = new FileReader();
+                    
+                fr.onload = function(){
+                    resolve(fr.result);
+                };
+
+                fr.onerror = function(){
+                    reject(fr);
+                };
+
+                fr.readAsText(file);
+            });
+        }
+            
         // Handle multiple fileuploads     
-        document.getElementById("csvFile").addEventListener("change", function (ev) {
+        document.getElementById("csvFile").addEventListener("change", function(ev){
             let files = ev.currentTarget.files;
             let readers = [];
 
             // Abort if there were no files selected
-            if (!files.length) return;
+            if(!files.length) return;
 
             // Store promises in array
-            for (let i = 0; i < files.length; i++) {
+            for(let i = 0;i < files.length;i++){
                 readers.push(readFileAsText(files[i]));
             }
-
+                        
             Promise.all(readers).then((values) => {
-
-                let viens = stringTo2dArray(values[0], "!", ",");
+                
+                let viens = stringTo2dArray(values[0],d1, d2);
 
                 compare(viens);
             });
         }, false);
+        
+        function stringTo2dArray(string, d1, d2) {
+            return string.split(d1).map(function(x){return x.split(d2)});
+        }
 
-        function compare(viens, divi, tris) {
-            if (viens[0][0] == "Str.ID") {
-                strukturasViss = forpush(viens);
-            } else {
-                alert("Izvēlēts nepareizais fails");
-                window.open("redigets.html", "_self");
+        function compare(viens,divi,tris){
+                
+                if (viens[0][0]=="Str.ID"){
+                    forpush(viens);
+                }else{ 
+                    alert("Izvēlēts nepareizais fails");
+                    window.open("redigets.html", "_self");
+                }
+                        
+            }
+                
+        function forpush(b){
+                        
+            for (let i=1;i<b.length;i++){
+                struktura.push(b[i][1]); //strukturu nosaukumi
+                strukturaId.push(b[i][0]); //strukturu ID nosaukumi
             }
 
+            strukturasViss=b; //Visu  strukturas masivs 
         }
-        Print();
-        function EditFunction() {
-            var struktid = document.getElementById("struktid").value;
+           
+        var rinda;
+            
+        function EditFunction(){
+            var struktid=document.getElementById("struktid").value;
             //alert(struktid);
-
-            var x = 0;  //rinda kurā atrodas struktūras id
-
-            for (var i = 0; i < strukturaId.length + 1; i++) {
-                if (struktid.trim() == strukturasViss[i][0].trim()) {
-                    x = i;
+            
+            var x=0;  //rinda kurā atrodas struktūras id
+            
+            for (var i=0;i<strukturaId.length+1;i++){
+                if(struktid.trim()==strukturasViss[i][0].trim()){
+                    x=i;
                     //alert(x);
                 }
             }
 
-            document.getElementById("strukturname").value = strukturasViss[x][1];
-            document.getElementById("strukturnameen").value = strukturasViss[x][2];
+            document.getElementById("strukturname").value=strukturasViss[x][1];
+            document.getElementById("strukturnameen").value=strukturasViss[x][2];
+
+            rinda = x;
+
+        }  
+
+        function submitOnClick(){
+
+            strukturasViss.pop();
+
+            var csvRows = [];
+            var temp;
+
+            var nos = document.getElementById("strukturname").value; 
+            var nos_en = document.getElementById("strukturnameen").value; 
+
+            if(nos == "" || nos_en == ""){
+                alert("Nosaukums nav aizpildīts!");
+                return false;
+            }
+
+            strukturasViss[rinda][1] = nos;
+            strukturasViss[rinda][2] = nos_en;
+
+            for (let i = 0; i < strukturasViss.length; i++) {
+                    temp = "";
+                        for (let j = 0; j < strukturasViss[0].length; j++) {
+                            if (j < strukturasViss[i].length-1) {
+                                temp = temp + strukturasViss[i][j] + ",";
+                            } else {
+                                temp = temp + strukturasViss[i][j] + "!";
+                            }
+                        }
+                    csvRows[i] = temp;
+                }
+
+                //simbolu atkodesanai
+                var universalBOM = "\uFEFF";
+                let csvContent = "data:text/csv;charset=utf-8," + universalBOM;
+
+                //masivu saliek string un pievieno pedejo string
+                for (let i = 0; i < csvRows.length; i++) {
+                        csvContent = csvContent + csvRows[i];
+                }
+
+                //faila download
+                var encodedUri = encodeURI(csvContent);
+                var link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "strukturvienibas.csv");
+                document.body.appendChild(link);
+                link.click();
+
+                alert("Struktūrvienības dati veiksmīgi saglabāti!");
+                window.open("rediget_strukturu.html", "_self");
         }
 
-    </script>
-</head>
-
-<body>
-    <form>
-        <p><label for="strukturname">Struktūrvienības nosaukums: </label><input type="text" id="strukturname"
-                name="strukturname" size="26pt"></p>
-        <p><label for="strukturnameen">Name of structure: </label><input type="text" id="strukturnameen"
-                name="strukturnameen" size="36pt"></p>
-        <button onclick="submitOnClick()">Rediģēt/Saglabāt</button>
-    </form>
-</body>
+    </script> 
+    </head>
+    <body>
+        <form onsubmit="return false">
+            <p><label for="strukturname">Struktūrvienības nosaukums: </label><input type="text" id="strukturname" name="strukturname"size="26pt"></p>
+            <p><label for="strukturnameen">Name of structure: </label><input type="text" id="strukturnameen" name="strukturnameen"size="36pt"></p>
+            <button onclick="submitOnClick()">Rediģēt/Saglabāt</button>
+        </form>
+    </body>
 
 </html>

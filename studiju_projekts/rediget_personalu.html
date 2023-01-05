@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script type="text/javascript" src="csv.js"></script>
-        <script type="text/javascript" src="file.js"></script>
-
-        <link rel="stylesheet" href="style.css">
-
         <h1>Izvēlieties darba failus:</h1>
         
         <form id="myForm">
@@ -17,8 +12,29 @@
             <p><label for="personid">Personas ID:&nbsp; </label><input type="text" id="personid" name="personid"size="34pt"></p>
             <button type="button" value="Submit" id="pievienot" class="pievienot" onclick="EditFunction()">Submit</button>  
         </form>
+
+        <style>
+            .amats{
+                width: 195pt;    
+            }
+
+            .amats2{
+                width: 178pt;    
+            }
+        
+            .str{
+                width: 148pt;
+            }
+
+            .str2{
+                width: 131pt;
+            }
+        </style>
     
         <script>
+
+        var d1 = "!";  //atdala masīva rindas
+        var d2 = ",";  //atdala masīva elementus rindā
 
         let amatiViss;  //viss fails 2d masīvā
         let strukturasViss;  //viss fails 2d masīvā
@@ -29,6 +45,23 @@
         const personals = [];  //personāla id masīvs
         const amatiId = [];  //amatu id masīvs
         const strukturaId = []; //struktūru id masīvs
+
+        //faila nolasisana
+        function readFileAsText(file){
+                return new Promise(function(resolve,reject){
+                    let fr = new FileReader();
+                    
+                    fr.onload = function(){
+                        resolve(fr.result);
+                    };
+
+                    fr.onerror = function(){
+                        reject(fr);
+                    };
+
+                    fr.readAsText(file);
+                });
+        }
             
         // Handle multiple fileuploads     
         document.getElementById("csvFile").addEventListener("change", function(ev){
@@ -45,44 +78,43 @@
                         
             // Trigger Promises
             Promise.all(readers).then((values) => {
-                // Values will be an array that contains an item
-                // with the text of every selected file
-                // ["File1 Content", "File2 Content" ... "FileN Content"]
-                        
-                //prieks viendimensiju parbaudes
-                // alert(values[0]);
-                // alert(values[1]);
-                // alert(values[2]);
                 
-                let viens = stringTo2dArray(values[0],"!", ",");
-                let divi = stringTo2dArray(values[1],"!", ",");
-                let tris = stringTo2dArray(values[2],"!", ",");
-                        
-                //prieks divdimensiju parbaudes
-                //alert(viens[0][0]+"\n"+divi[0][0]+"\n"+tris[0][0]);
+                let viens = stringTo2dArray(values[0],d1, d2);
+                let divi = stringTo2dArray(values[1],d1, d2);
+                let tris = stringTo2dArray(values[2],d1, d2);
+
                 compare(viens,divi,tris);
             });
         }, false);
-                    
-        function compare(viens,divi,tris) {
+        
+        //saliek stringus masivos
+        function stringTo2dArray(string, d1, d2) {
+            return string.split(d1).map(function(x){return x.split(d2)});
+        }
+              
+        //nosaka kurs ir kurs fails
+        function compare(viens,divi,tris){
+                
             if (viens[0][0]=="Am.ID" && divi[0][0]=="Str.ID" && tris[0][0]=="ID") {
                 forpush(viens,divi,tris); 
-            } else if (viens[0][0]=="Str.ID" && divi[0][0]=="Am.ID" && tris[0][0]=="ID"){
+            }else if (viens[0][0]=="Str.ID" && divi[0][0]=="Am.ID" && tris[0][0]=="ID"){
                 forpush(divi,viens,tris);
-            } else if (viens[0][0]=="ID" && divi[0][0]=="Str.ID" && tris[0][0]=="Am.ID"){
+            }else if (viens[0][0]=="ID" && divi[0][0]=="Str.ID" && tris[0][0]=="Am.ID"){
                 forpush(tris,divi,viens);
-            } else if (viens[0][0]=="ID" && divi[0][0]=="Am.ID" && tris[0][0]=="Str.ID"){
+            }else if (viens[0][0]=="ID" && divi[0][0]=="Am.ID" && tris[0][0]=="Str.ID"){
                 forpush(divi,tris,viens);
-            } else if (viens[0][0]=="Am.ID" && divi[0][0]=="ID" && tris[0][0]=="Str.ID"){
+            }else if (viens[0][0]=="Am.ID" && divi[0][0]=="ID" && tris[0][0]=="Str.ID"){
                 forpush(viens,tris,divi);
-            } else if (viens[0][0]=="Str.ID" && divi[0][0]=="ID" && tris[0][0]=="Am.ID"){
+            }else if (viens[0][0]=="Str.ID" && divi[0][0]=="ID" && tris[0][0]=="Am.ID"){
                 forpush(tris,viens,divi);
-            } else { 
+            }else{ 
                 alert("Izvēlēti nepareizi faili");
                 window.open("Main.html", "_parent");
             }
+                    
         }
             
+        //saliek pareizas vertibas pareizos masivos
         function forpush(a,b,c){
             
             for (let i=1;i<a.length;i++){
@@ -104,7 +136,8 @@
             personalsViss=c; //Visu personals masivs
             GFG_Fun(amati,struktura,personals);
         } 
-            
+         
+        //aizpilda dropdown
         function GFG_Fun(amati,struktura,personals){
             
             var select = document.getElementById("amats");
@@ -155,9 +188,11 @@
             }
         }       
 
+        var rinda;
+
+        //lauku aizpilde
         function EditFunction(){
             var personid=document.getElementById("personid").value;
-            //alert(personid);
             
             var x=-1;  //rinda kurā atrodas personāla id
             var y=0;  //rinda kurā atrodas amata id atkarība no ID (pesonala)
@@ -166,6 +201,7 @@
             var z2=0;
             var y3=0;
             var z3=0;
+
             for (var i=0;i<personals.length;i++){
                 if(parseInt(personid)==parseInt(personals[i])){
                 x=i+1;
@@ -199,31 +235,328 @@
                     z3=i;
                 }
             }
-            //amatiId
-            //jaizvada 88
-            //personalsViss[x][14] kur atrodas amats
 
-            document.getElementById("fname").value=personalsViss[x][6];
-            document.getElementById("lname").value=personalsViss[x][8];
-            document.getElementById("grads").value=personalsViss[x][10];
-            document.getElementById("telnr").value=personalsViss[x][12];
+            document.getElementById("fname").value=personalsViss[x][6]; //aizpilda vardu
+            document.getElementById("lname").value=personalsViss[x][8]; //aizpilda uzvardu
+            document.getElementById("grads").value=personalsViss[x][10]; //aizpilda gradu
+            document.getElementById("telnr").value=personalsViss[x][12]; //aizpilda telefonu
 
             document.getElementById('amats').getElementsByTagName('option')[y].selected = 'selected' ; //izvada amats 1selected
-            document.getElementById('struktura').getElementsByTagName('option')[z].selected = 'selected'  ;//izvada amats 1selected
+            document.getElementById('struktura').getElementsByTagName('option')[z].selected = 'selected'  ;//izvada struktura 1selected
        
             document.getElementById('amats2').getElementsByTagName('option')[y2].selected = 'selected' ; //izvada amats 1selected
-            document.getElementById('struktura2').getElementsByTagName('option')[z2].selected = 'selected'  ;//izvada amats 1selected
+            document.getElementById('struktura2').getElementsByTagName('option')[z2].selected = 'selected'  ;//izvada struktura 1selected
         
             document.getElementById('amats3').getElementsByTagName('option')[y3].selected = 'selected' ; //izvada amats 1selected
-            document.getElementById('struktura3').getElementsByTagName('option')[z3].selected = 'selected'  ;//izvada amats 1selected
+            document.getElementById('struktura3').getElementsByTagName('option')[z3].selected = 'selected'  ;//izvada struktura 1selected
+            
+            if(personalsViss[x][1].trim()=="n"){
+                document.getElementById("strada").checked = true;
+            }else{
+                document.getElementById("strada").checked = false;
+            }
+
+            if(personalsViss[x][2].trim()=="n"){
+                document.getElementById("radit").checked = true;
+            }else{
+                document.getElementById("radit").checked = false;
+            }
+
+            if(personalsViss[x][3].trim()=="n"){
+                document.getElementById("aizsardziba").checked = true;
+            }else{
+                document.getElementById("aizsardziba").checked = false;
+            }
+
+            if(personalsViss[x][5].trim()=="y"){
+                document.getElementById("proj").checked = true;
+            }else{
+                document.getElementById("proj").checked = false;
+            }
+
+            rinda=x;
         }  
+
+        function saglabat(){
+
+            //nonem pedejo random rindu
+            personalsViss.pop();
+            
+            var stradaa; //1
+            var radit; //2
+            var aizsardz; //3
+            var radit_sum; //4
+            var zp; //5
+            var vards = document.getElementById("fname").value; //6,7
+            var uzv = document.getElementById("lname").value; //8,9
+            var gradss = document.getElementById("grads").value; //10
+            var epasts; //11
+            var tele = document.getElementById("telnr").value; //12
+            var strukt; //13
+            var ama; //14
+            var strukt2; //15
+            var ama2; //16
+            var strukt3; //17
+            var ama3; //18
+            
+            //datu validacija
+            if (/\d/.test(vards) == true || /\d/.test(uzv) == true) {
+                alert("Vārds vai uzvārds drīkst saturēt tikai burtus!");
+                return false;
+            }
+            
+            if (tele != "") {
+                if (isNaN(tele) == true) {
+                    alert("Tālruņa numurs drīkst saturēt tikai ciparus!");
+                    return false;
+                    //System.exit(0);
+                }
+                if (tele.length != 8) {
+                    alert("Tālruņa numurā ir jābūt 8 cipariem!");
+                    return false;
+                }
+            }
+
+            if(document.getElementById("amats").value == ""){
+                alert("Jāizvēlas vismaz viens amats!");
+                return false;
+            }
+
+            if(document.getElementById("struktura").value == "" ){
+                alert("Jāizvēlas vismaz viena struktūra!");
+                return false;
+            }
+
+            var select = document.getElementById('amats');
+            var select2 = document.getElementById('amats2');
+            var select3 = document.getElementById('amats3');
+            var select4 = document.getElementById('struktura');
+            var select5 = document.getElementById('struktura2');
+            var select6 = document.getElementById('struktura3');
+
         
+
+            //amats1
+            if (select.selectedIndex === -1) {
+                ama = undefined;
+            } else {
+                ama = select.options[select.selectedIndex].text;
+            }
+            
+            //amats2
+            if (select2.selectedIndex === -1) {
+                ama2 = undefined;
+            } else {
+                ama2 = select2.options[select2.selectedIndex].text;
+            }
+            
+            //amats3
+            if (select3.selectedIndex === -1) {
+                ama3 = undefined;
+            } else {
+                ama3 = select3.options[select3.selectedIndex].text;
+            }
+
+            //struktura1
+            if (select4.selectedIndex === -1) {
+                strukt = undefined;
+            } else {
+                strukt = select4.options[select4.selectedIndex].text;
+            }
+            
+            //struktura2
+            if (select5.selectedIndex === -1) {
+                strukt2 = undefined;
+            } else {
+                strukt2 = select5.options[select5.selectedIndex].text;
+            }
+            
+            //struktura3
+            if (select6.selectedIndex === -1) {
+                strukt3 = undefined;
+            } else {
+                strukt3 = select6.options[select6.selectedIndex].text;
+            }
+
+            //datu aizsardziba
+            if(document.getElementById("strada").checked == true){
+                stradaa="";
+            }else{
+                stradaa="n";
+            }
+ 
+            //datu aizsardziba
+            if(document.getElementById("aizsardziba").checked == true){
+                aizsardz="n";
+            }else{
+                aizsardz="";
+            }
+
+            //datu radit other
+            if(document.getElementById("radit").checked == true){
+                radit="n";
+            }else{
+                radit="";
+            }
+
+            //zinatniskie projekti
+            if(document.getElementById("proj").checked == true){
+                zp="y";
+            }else{
+                zp="";
+            }
+                        
+            //vai radit vispar lapaa
+            if(aizsardz=="n" || radit=="n" || stradaa == "n"){
+                radit_sum = "n";
+            }else{
+                radit_sum="";
+            }
+
+            //Amats ID iegusana, jo ir dots nosaukums, vjg ID personala tabula
+            if(ama == undefined){
+                ama = "";
+                
+            }else{
+                for (let i=0;i<amatiViss.length;i++){  
+                    if(ama.trim()==amatiViss[i][1].trim()){
+                        ama=amatiViss[i][0].trim();
+                        //alert("1 amats ir dati");
+                        break;
+                    } 
+                }
+            }
+            // alert("cau");
+            if(ama2 == ""){
+                ama2 = "";
+                //alert("2 amats tuks");
+            } else {
+                for (let i=0;i<amatiViss.length;i++){
+                    if(ama2.trim()==amatiViss[i][1].trim()){
+                        ama2=amatiViss[i][0].trim();
+                        //alert("2 amats ir dati");
+                        break;
+                    } 
+                }
+            }
+            
+            if(ama3 == ""){
+                ama3 = "";
+                //alert("3 amats tuks");
+            } else {
+                for (let i=0;i<amatiViss.length;i++){
+                    if(ama3.trim()==amatiViss[i][1].trim()){
+                        ama3=amatiViss[i][0].trim();
+                        break;
+                    } 
+                }   
+            }
+
+            //TALAK SAME TIKAI STUKTURAM
+            if(strukt == undefined){
+                strukt = "";
+            } else {
+                for (let i=0;i<strukturasViss.length;i++){
+                    if(strukt.trim()==strukturasViss[i][1].trim()){
+                        strukt=strukturasViss[i][0].trim();
+                        break;
+                    } 
+                }
+            }
+
+            if(strukt2 == ""){
+                strukt2 = "";
+            } else {
+                for (let i=0;i<strukturasViss.length;i++){
+                    if(strukt2.trim()==strukturasViss[i][1].trim()){
+                        strukt2=strukturasViss[i][0].trim();
+                        break;
+                    } 
+                } 
+            }
+            //alert("cau");
+            if(strukt3 == ""){
+                strukt3 = "";
+            } else {
+                for (let i=0;i<strukturasViss.length;i++){
+                    if(strukt3.trim()==strukturasViss[i][1].trim()){
+                        strukt3=strukturasViss[i][0].trim();
+                        break;
+                    } 
+                } 
+            }
+
+            personalsViss[rinda][1]=stradaa;
+            personalsViss[rinda][2]=radit;
+            personalsViss[rinda][3]=aizsardz;
+            personalsViss[rinda][4]=radit_sum;
+            personalsViss[rinda][5]=zp;
+            personalsViss[rinda][6]=vards;
+            personalsViss[rinda][7]=vards;
+            personalsViss[rinda][8]=uzv;
+            personalsViss[rinda][9]=uzv;
+            personalsViss[rinda][10]=gradss;
+            personalsViss[rinda][11]=vards+"."+uzv;
+            personalsViss[rinda][12]=tele;
+            personalsViss[rinda][13]=strukt;
+            personalsViss[rinda][14]=ama;
+            personalsViss[rinda][15]=strukt2;
+            personalsViss[rinda][16]=ama2;
+            personalsViss[rinda][17]=strukt3;
+            personalsViss[rinda][18]=ama3;
+            personalsViss[rinda][23]="0";
+            personalsViss[rinda][24]="FALSE";
+
+            
+
+            //jauni masivi pievienosanai
+            var csvRows = [];
+            var temp;
+            
+                for (let i = 0; i < personalsViss.length; i++) {
+                    temp = "";
+                        for (let j = 0; j < personalsViss[0].length; j++) {  
+                            if (j < personalsViss[i].length - 1) {
+                                temp = temp + personalsViss[i][j] + ",";    
+                            } else {
+                                temp = temp + personalsViss[i][j] + "!";    
+                            }  
+                        }
+                    csvRows[i] = temp;
+                }
+                
+                //simbolu atkodesanai
+                var universalBOM = "\uFEFF";
+                //string, ko rakstit failaa
+                let csvContent = "data:text/csv;charset=utf-8," + universalBOM;
+
+                //string aizpildisana
+                for (let i = 0; i < csvRows.length; i++) {
+                    // if (i < csvRows.length - 1) {
+                        csvContent = csvContent + csvRows[i];
+                    // } else {
+                    //     csvContent = csvContent + "\r\n" + csvRows[i];
+                    // }
+                }
+
+                //faila download
+                var encodedUri = encodeURI(csvContent);
+                var link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "personals.csv");
+                document.body.appendChild(link);
+                link.click();
+
+                alert("Personāla dati veiksmīgi saglabāti!");
+                window.open("rediget_personalu.html", "_self");
+        }
+
         </script>
         
         <h1>Personāla rediģēšana</h1>
     </head>
     <body>
-            <p><form><label for="fname">Name:&nbsp; </label><input type="text" id="fname" name="fname"size="40pt"></p>
+            <p><form onsubmit="return false"><label for="fname">Name:&nbsp; </label><input type="text" id="fname" name="fname"size="40pt"></p>
                 <label for="lname">Last name:&nbsp; </label><input type="text" id="lname" name="lname"size="36pt"></p>
                 <label for="grads">Grāds:&nbsp; </label><input type="text" id="grads" name="grads"size="40pt"></p>
                 <label for="telnr">Telefona numurs: &nbsp; </label><input type="text" id="telnr" name="telnr"size="29pt"></form></p>
@@ -252,24 +585,18 @@
                 <select name="struktura3" id="struktura3" class = "str2"></select>
             </p>
             <p>Vai vēl strādā?&nbsp;
-                <label for="strada">Jā&nbsp; </label>
                 <input type="checkbox" id="strada" name="strada" value="strada">
-                <label for="nestrada">Nē&nbsp; </label>
-                <input type="checkbox" id="nestrada" name="nestrada" value="nestrada">
             </p>
             <p>Datu aizsardzība?&nbsp;
-                <label for="aizsardziba">Jā&nbsp; </label>
                 <input type="checkbox" id="aizsardziba" name="aizsardziba" value="aizsardziba">
-                <label for="neaizsardziba">Nē&nbsp; </label>
-                <input type="checkbox" id="neaizsardziba" name="neaizsardziba" value="neaizsardziba">
+            </p>
+            <p>Vai rādīt? (pagaidu darbinieki, apkopēji u.c.)&nbsp;
+                <input type="checkbox" id="radit" name="radit" value="radit">
             </p>
             <p>Vai ir zinātniskie projekti?&nbsp;
-                <label for="proj">Jā&nbsp; </label>
                 <input type="checkbox" id="proj" name="proj" value="proj">
-                <label for="neproj">Nē&nbsp; </label>
-                <input type="checkbox" id="neproj" name="neproj" value="neproj">
             </p>
             
-            <button onclick="submitOnClick()">Rediģēt/saglabāt</button>
+            <button onclick="saglabat()">Rediģēt/saglabāt</button>
     </body>
 </html>

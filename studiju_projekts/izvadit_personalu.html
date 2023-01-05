@@ -60,7 +60,7 @@
                 // parbauda vai tiesam ir 3 faili
                 if (values.length != 3) {
                     alert("Nav izvēlēti 3 faili");
-                    window.open("pievienotp.html", "_self");
+                    window.open("izvadit_personalu.html", "_self");
                 }
 
                 //igust 2d masivus
@@ -157,7 +157,29 @@
             return string;
         }
 
+        function datuAizsardziba(string) {
+            if(string == undefined) { return }
+
+            if(string.trim() == "n") { return false;
+            } else { return true; }
+        }  
+        
+        function copyStringToClipboard (string) {
+            var el = document.createElement('textarea');
+            el.value = string;
+            el.setAttribute('readonly', '');
+            el.style = {position: 'absolute', left: '-9999px'};
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            alert("Copied to clipboard!")
+        }
+
         function submitOnClick() {
+            var fullname;
+            var contacts;
+
             var struktura;
             var struktura2;
             var struktura3;
@@ -167,16 +189,19 @@
             var amats3;
 
             let choice = document.getElementById("izvadit").value;
-            let personals_len = personalsViss.length; // lieks ?
 
             var tempArr = [];
 
             if (choice == "strukturvieniba") {
-                tempArr.push(["Grāds", "Vārds", "Uzvārds",
+                tempArr.push(["Grāds", "Vārds Uzvārds",
                 "Struktūrvienība 1","Struktūrvienība 2", "Struktūrvienība 3",
-                "Amats 1", "Amats 2", "Amats 3", "Telefona Nr."]);
+                "Amats 1", "Amats 2", "Amats 3", "Kontakti"]);
 
                 for (let i = 1; i < personalsViss.length; i++) {
+
+                    fullname = personalsViss[i][7] + " " + personalsViss[i][9];
+                    contacts = personalsViss[i][7] + "." + personalsViss[i][9] + "@cfi.lu.lv   " + personalsViss[i][12] 
+
                     struktura = personalsViss[i][13];
                     struktura2 = personalsViss[i][15];
                     struktura3 = personalsViss[i][17];
@@ -193,17 +218,22 @@
                     amats2 = translateAmati(amats2);
                     amats3 = translateAmati(amats3);
 
-                    tempArr.push([personalsViss[i][10], personalsViss[i][7], personalsViss[i][9],
-                        struktura, struktura2, struktura3,
-                    amats, amats2, amats3, personalsViss[i][12]]);
+                    if(datuAizsardziba(personalsViss[i][4])) { 
+                        tempArr.push([personalsViss[i][10], fullname,
+                                        struktura, struktura2, struktura3,
+                                            amats, amats2, amats3, contacts]);
+                    }
                 }
-                tempArr.splice(personalsViss.length - 1, 1); // removes undefined row(?)
+                tempArr.splice(personalsViss.length - 1, 1); 
 
             } else if (choice == "uzvards") {
-                tempArr.push(["Grāds", "Vārds", "Uzvārds",
-                    "Amats 1", "Amats 2", "Amats 3", "Telefona Nr."]);
+                tempArr.push(["Grāds", "Vārds Uzvārds",
+                    "Amats 1", "Amats 2", "Amats 3", "Kontakti"]);
 
                 for (let i = 1; i < personalsViss.length; i++) {
+                    fullname = personalsViss[i][7] + " " + personalsViss[i][9];
+                    contacts = personalsViss[i][7] + "." + personalsViss[i][9] + "@cfi.lu.lv   " + personalsViss[i][12]
+
                     amats = personalsViss[i][14];
                     amats2 = personalsViss[i][16];
                     amats3 = personalsViss[i][18];
@@ -212,17 +242,21 @@
                     amats2 = translateAmati(amats2);
                     amats3 = translateAmati(amats3);
 
-                    tempArr.push([personalsViss[i][10], personalsViss[i][7], personalsViss[i][9],
-                    amats, amats2, amats3, personalsViss[i][12]]);
+                    if(datuAizsardziba(personalsViss[i][4])) { 
+                        tempArr.push([personalsViss[i][10], fullname,
+                            amats, amats2, amats3, contacts]);
+                    }
+                    
                 }
-                tempArr.splice(personalsViss.length - 1, 1); // removes undefined row(?)     
+                tempArr.splice(personalsViss.length - 1, 1);  
 
             } else if (choice == "empty") {
                 alert("Lūdzu izvēlaties tipu");
                 document.reload();
             }
             var table = makeTableHTML(tempArr);
-            document.write(table);
+            document.write(table);    
+            copyStringToClipboard(table);
         }
 
     </script>
