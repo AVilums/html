@@ -37,6 +37,6 @@ function compareThreeFiles(viens,divi,tris) {
         forpush(tris,viens,divi);
     }else { 
         alert("Izvēlēti nepareizi faili");
-        window.open("pievienotp.html", "_self");
+        window.open("pievienot_personalu.html", "_self");
     }
 }
