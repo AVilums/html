@@ -4,72 +4,223 @@
 <head>
     <script type="text/javascript" src="csv.js"></script>
     <script type="text/javascript" src="file.js"></script>
-    
+
     <h1>Izvēlēties darba failus:</h1>
-    
+
     <form id="myForm">
-        <label for="csvFile">Pievienojiet <b>personals.csv</b> failu</label>
-        <input type="file" id="csvFile" accept=".csv" multiple/>
-        <br />
+        <label for="csvFile">Pievienojiet <b>amati.csv</b>, <b>stukturvienibas.csv</b>, <b>personals.csv
+            </b>failus</label>
+        <input type="file" id="csvFile" accept=".csv" multiple />
     </form>
 
     <h1>Personāla izvade pēc:</h1>
-    
+
     <script>
-        var personalsViss;
+        //failu nolasisana
+        function readFileAsText(file) {
+            return new Promise(function (resolve, reject) {
+                let fr = new FileReader();
 
-        const struktura = []; // piesardzīgi ar šiem nosaukiem, jo compare funkcijas izmanto
-        const strukturaId = []; // abus mainīgos, kā fiksētus 
+                fr.onload = function () {
+                    resolve(fr.result);
+                };
 
-        document.getElementById("csvFile").addEventListener("change", function(ev) {
-        let files = ev.currentTarget.files;
-        let readers = [];
+                fr.onerror = function () {
+                    reject(fr);
+                };
 
-        if(!files.length) return;                               // Abort if there were no files selected
-                                                                
-        for(let i = 0;i < files.length;i++) {                   // Store promises in array
-            readers.push(readFileAsText(files[i]));
+                fr.readAsText(file);
+            });
         }
-                
-        Promise.all(readers).then((values) => {                     // Trigger Promises
-            checkFileAmount(values, 1);                             // file.js
-            let viens = stringTo2dArray(values[0],"!", ",");
-            compareToPersonals(viens);                              // file.js
-        });
-    }, false);
+
+        //atdalitaji
+        var d1 = "!";
+        var d2 = ",";
+
+        let amatiViss;  //viss fails 2d masīvā
+        let strukturasViss;  //viss fails 2d masīvā
+        let personalsViss;  //viss fails 2d masīvā
+
+        // failu ierakstisana ka string 1d masiva
+        document.getElementById("csvFile").addEventListener("change", function (ev) {
+            let files = ev.currentTarget.files;
+            let readers = [];
+
+            // Abort if there were no files selected
+            if (!files.length) return;
+
+            // Store promises in array
+            for (let i = 0; i < files.length; i++) {
+                readers.push(readFileAsText(files[i]));
+            }
+
+            // Trigger Promises
+            Promise.all(readers).then((values) => {
+
+                // parbauda vai tiesam ir 3 faili
+                if (values.length != 3) {
+                    alert("Nav izvēlēti 3 faili");
+                    window.open("pievienotp.html", "_self");
+                }
+
+                //igust 2d masivus
+                let viens = stringTo2dArray(values[0], d1, d2);
+                let divi = stringTo2dArray(values[1], d1, d2);
+                let tris = stringTo2dArray(values[2], d1, d2);
+
+                //parbauda vai pievienoti pareizie faili
+                compare(viens, divi, tris);
+            });
+        }, false);
+
+        function stringTo2dArray(string, d1, d2) {
+            return string.split(d1).map(function (x) {
+                return x.split(d2)
+            });
+        }
+
+        //iegust id
+        const amati = [];
+        const struktura = [];
+        const personals = [];
+
+        //salidzina vai pareizie faili un kurs ir kurs
+        function compare(viens, divi, tris) {
+
+            if (viens[0][0] == "Am.ID" && divi[0][0] == "Str.ID" && tris[0][0] == "ID") {
+                forpush(viens, divi, tris);
+            } else if (viens[0][0] == "Str.ID" && divi[0][0] == "Am.ID" && tris[0][0] == "ID") {
+                forpush(divi, viens, tris);
+            } else if (viens[0][0] == "ID" && divi[0][0] == "Str.ID" && tris[0][0] == "Am.ID") {
+                forpush(tris, divi, viens);
+            } else if (viens[0][0] == "ID" && divi[0][0] == "Am.ID" && tris[0][0] == "Str.ID") {
+                forpush(divi, tris, viens);
+            } else if (viens[0][0] == "Am.ID" && divi[0][0] == "ID" && tris[0][0] == "Str.ID") {
+                forpush(viens, tris, divi);
+            } else if (viens[0][0] == "Str.ID" && divi[0][0] == "ID" && tris[0][0] == "Am.ID") {
+                forpush(tris, viens, divi);
+            } else {
+                alert("Izvēlēti nepareizi faili");
+                window.open("pievienotp.html", "_self");
+            }
+        }
+
+        //iegust id un saraksta masivos
+        function forpush(a, b, c) {
+            for (let i = 1; i < a.length; i++) {
+                amati.push(a[i][1]);
+            }
+
+            for (let i = 1; i < b.length; i++) {
+                struktura.push(b[i][1]);
+            }
+
+            for (let i = 1; i < c.length; i++) {
+                personals.push(c[i][0]);
+            }
+
+            //saraksta pareizas vertibas atbilstosajos masivos
+            amatiViss = a;
+            strukturasViss = b;
+            personalsViss = c;
+
+            GFG_Fun(amati, struktura, personals);
+        }
+
+        function translateStrukturvieniba(string) {
+            if (string == "") {
+                string = "";
+            } else {
+                for (let j = 0; j < strukturasViss.length; j++) {
+                    if (string == undefined) { break; }
+                    if (string.trim() == strukturasViss[j][0].trim()) {
+                        string = strukturasViss[j][1].trim();
+                        break;
+                    }
+                }
+            }
+            return string;
+        }
+
+        function translateAmati(string) {
+            if (string == "") {
+                string = "";
+            } else {
+                for (let j = 0; j < amatiViss.length; j++) {
+                    if (string == undefined) { break; }
+                    if (string.trim() == amatiViss[j][0].trim()) {
+                        string = amatiViss[j][1].trim();
+                        break;
+                    }
+                }
+            }
+            return string;
+        }
 
         function submitOnClick() {
+            var struktura;
+            var struktura2;
+            var struktura3;
+
+            var amats;
+            var amats2;
+            var amats3;
+
             let choice = document.getElementById("izvadit").value;
-            let personals_len = personalsViss.length;
+            let personals_len = personalsViss.length; // lieks ?
 
             var tempArr = [];
-            
-            if (choice == "strukturvieniba") { 
-                tempArr.push(["Grāds", "Vārds", "Uzvārds", 
-                "Struktūrvienība 1", "S 2", "S 3",
-                "Amats 1", "A 2", "A 3", "Telefona Nr."]);
+
+            if (choice == "strukturvieniba") {
+                tempArr.push(["Grāds", "Vārds", "Uzvārds",
+                "Struktūrvienība 1","Struktūrvienība 2", "Struktūrvienība 3",
+                "Amats 1", "Amats 2", "Amats 3", "Telefona Nr."]);
 
                 for (let i = 1; i < personalsViss.length; i++) {
+                    struktura = personalsViss[i][13];
+                    struktura2 = personalsViss[i][15];
+                    struktura3 = personalsViss[i][17];
+
+                    amats = personalsViss[i][14];
+                    amats2 = personalsViss[i][16];
+                    amats3 = personalsViss[i][18];
+
+                    struktura = translateStrukturvieniba(struktura);
+                    struktura2 = translateStrukturvieniba(struktura2);
+                    struktura3 = translateStrukturvieniba(struktura3);
+
+                    amats = translateAmati(amats);
+                    amats2 = translateAmati(amats2);
+                    amats3 = translateAmati(amats3);
+
                     tempArr.push([personalsViss[i][10], personalsViss[i][7], personalsViss[i][9],
-                    personalsViss[i][13], personalsViss[i][15], personalsViss[i][17],
-                    personalsViss[i][14], personalsViss[i][16], personalsViss[i][18], personalsViss[i][12]]);
+                        struktura, struktura2, struktura3,
+                    amats, amats2, amats3, personalsViss[i][12]]);
                 }
                 tempArr.splice(personalsViss.length - 1, 1); // removes undefined row(?)
 
             } else if (choice == "uzvards") {
-                tempArr.push(["Grāds", "Vārds", "Uzvārds", 
-                "Amats 1", "A 2", "A 3", "Telefona Nr."]);
+                tempArr.push(["Grāds", "Vārds", "Uzvārds",
+                    "Amats 1", "Amats 2", "Amats 3", "Telefona Nr."]);
 
                 for (let i = 1; i < personalsViss.length; i++) {
+                    amats = personalsViss[i][14];
+                    amats2 = personalsViss[i][16];
+                    amats3 = personalsViss[i][18];
+
+                    amats = translateAmati(amats);
+                    amats2 = translateAmati(amats2);
+                    amats3 = translateAmati(amats3);
+
                     tempArr.push([personalsViss[i][10], personalsViss[i][7], personalsViss[i][9],
-                    personalsViss[i][14], personalsViss[i][16], personalsViss[i][18], personalsViss[i][12]]);
+                    amats, amats2, amats3, personalsViss[i][12]]);
                 }
-                tempArr.splice(personalsViss.length - 1, 1); // removes undefined row(?)        
+                tempArr.splice(personalsViss.length - 1, 1); // removes undefined row(?)     
+
             } else if (choice == "empty") {
                 alert("Lūdzu izvēlaties tipu");
                 document.reload();
             }
-         
             var table = makeTableHTML(tempArr);
             document.write(table);
         }

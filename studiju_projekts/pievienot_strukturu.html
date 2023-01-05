@@ -1,103 +1,164 @@
 <!DOCTYPE html>
 <html>
+    <head>
 
-<head>
-    <script type="text/javascript" src="csv.js"></script>
-    <script type="text/javascript" src="file.js"></script>
+        <h1>Izvēlēties darba failus:</h1>
 
-    <h1>Izvēlēties darba failus:</h1>
+        <form id="myForm">
+            <label for="csvFile">Pievienojiet <b>stukturvienibas.csv</b> failus</label>
+            <input type="file" id="csvFile" accept=".csv"/>
+            <br />
+        </form>
 
-    <form id="myForm">
-        <label for="csvFile">Pievienojiet <b>stukturvienibas.csv</b> failus</label>
-        <input type="file" id="csvFile" accept=".csv" />
-        <br/>
-    </form>
+        <h1>Stuktūrvienības pievienošana</h1>
 
-    <h1>Stuktūrvienības pievienošana</h1>
-    
-    <script>
-        var strukturasViss;  //viss fails 2d masīvā
+        <script>
 
-        const struktura = []; // struktūru nosaukumu masīvs
-        const strukturaId = []; //struktūru id masīvs
+            var d1 = "!";  //atdala masīva rindas
+            var d2 = ",";  //atdala masīva elementus rindā
 
-        // Handle multiple fileuploads     
-        document.getElementById("csvFile").addEventListener("change", function (ev) {
-            let files = ev.currentTarget.files;
-            let readers = [];
+            let strukturasViss;  //viss fails 2d masīvā
 
-            // Abort if there were no files selected
-            if (!files.length) return;
+            const struktura = []; // struktūru nosaukumu masīvs
+            const strukturaId = []; //struktūru id masīvs
 
-            // Store promises in array
-            for (let i = 0; i < files.length; i++) {
-                readers.push(readFileAsText(files[i]));
+            //faila nolasisana
+            function readFileAsText(file){
+                return new Promise(function(resolve,reject){
+                    let fr = new FileReader();
+                        
+                    fr.onload = function(){
+                        resolve(fr.result);
+                    };
+
+                    fr.onerror = function(){
+                        reject(fr);
+                    };
+
+                    fr.readAsText(file);
+                });
+            }
+                
+            // Handle multiple fileuploads     
+            document.getElementById("csvFile").addEventListener("change", function(ev){
+                let files = ev.currentTarget.files;
+                let readers = [];
+
+                // Abort if there were no files selected
+                if(!files.length) return;
+
+                // Store promises in array
+                for(let i = 0;i < files.length;i++){
+                    readers.push(readFileAsText(files[i]));
+                }
+                            
+                Promise.all(readers).then((values) => {
+                    let viens = stringTo2dArray(values[0],d1, d2);
+                    compare(viens);
+                });
+            }, false);
+            
+            //string uz masivu
+            function stringTo2dArray(string, d1, d2) {
+                return string.split(d1).map(function(x){return x.split(d2)});
             }
 
-            Promise.all(readers).then((values) => {
-                let viens = stringTo2dArray(values[0], "!", ",");
-                compare(viens);
-            });
+            //nosaka vai pareizais fails
+            function compare(viens){
 
-        }, false);
-
-        function compare(viens, divi, tris) {
-            if (viens[0][0] == "Str.ID") {
-                strukturasViss = forpush(viens);
-            } else {
-                alert("Izvēlēts nepareizais fails");
-                window.open("pievienots.html", "_self");
+                if (viens[0][0]=="Str.ID"){
+                    forpush(viens);
+                }else{ 
+                    alert("Izvēlēts nepareizais fails!");
+                    window.open("pievienots.html", "_self");
+                }             
             }
-        }
+             
+            //saliek vertibas masivos
+            function forpush(b){
+                            
+                for (let i=1;i<b.length;i++){
+                    struktura.push(b[i][1]); //strukturu nosaukumi
+                    strukturaId.push(b[i][0]); //strukturu ID nosaukumi
+                }
 
-        function arrayToCSV() {
-            //  Modified from: http://stackoverflow.com/questions/17836273/
-            //  export-javascript-data-to-csv-file-without-server-interaction
-            var csvRows = [];
-            var temp;
+                strukturasViss=b; //Visu  strukturas masivs 
+            }
 
-            for (let i = 0; i < strukturasViss.length - 1; i++) {
-                temp = "";
+            //poga
+            function arrayToCSV () {
+                //mainigie faila download
+                var csvRows = [];
+                var temp;
+                var newPers = "";
+                let stukturasid = document.getElementById("stukturasid").value;
+                let strukturname = document.getElementById("strukturname").value;
+                let strukturnameen = document.getElementById("strukturnameen").value;
 
-                for (let j = 0; j < strukturasViss[i].length; j++) {
-                    if (j < strukturasViss[i].length - 1) {
-                        temp = temp + strukturasViss[i][j] + ",";
+                //id validacija
+                for(let i = 1; i<strukturasViss.length; i++){
+                    if(stukturasid.trim() == strukturasViss[i][0].trim()){
+                        alert("Tāds ID jau pastāv!");
+                        return false;
+                    }
+                }      
+                
+                //nonem pedejo random rindu
+                strukturasViss.pop();
+                
+                //jaunas strukturas string ko pievienot
+                newPers = stukturasid+","+strukturname+","+strukturnameen+"!";
+
+                //elementus saliek string un string saliek masiva
+                for (let i = 0; i <= strukturasViss.length; i++) {
+                    temp = "";
+                    if (i < strukturasViss.length) {
+                        for (let j = 0; j < strukturasViss[0].length; j++) {
+                            if (j < strukturasViss[i].length-1) {
+                                temp = temp + strukturasViss[i][j] + ",";
+                            } else {
+                                temp = temp + strukturasViss[i][j] + "!";
+                            }
+                        }
                     } else {
-                        temp = temp + strukturasViss[i][j] + "!";
+                        temp = temp + newPers;
+                    }
+                    csvRows[i] = temp;
+                }
+
+                //simbolu atkodesanai
+                var universalBOM = "\uFEFF";
+                let csvContent = "data:text/csv;charset=utf-8," + universalBOM;
+
+                //masivu saliek string un pievieno pedejo string
+                for (let i = 0; i < csvRows.length; i++) {
+                    if (i < csvRows.length - 1) {
+                        csvContent = csvContent + csvRows[i];
+                    } else {
+                        csvContent = csvContent + "\r\n" + csvRows[i];
                     }
                 }
-                csvRows[i] = temp;
+
+                //faila download
+                var encodedUri = encodeURI(csvContent);
+                var link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "strukturvienibas.csv");
+                document.body.appendChild(link);
+                link.click();
+
+                alert("Struktūrvienības dati veiksmīgi pievienoti!");
+                window.open("pievienot_strukturu.html", "_self");
             }
-
-            for (let i = 0; i < csvRows.length; i++) {
-                alert("Row:  " + i + "  :" + csvRows[i]);
-            }
-
-            var universalBOM = "\uFEFF";
-
-            const data = strukturasViss;
-            let csvContent = "data:text/csv;charset=utf-8," + universalBOM + data.map(e => e.join(","));
-
-            var encodedUri = encodeURI(csvContent);
-            var link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "strukturvienibas.csv");
-            document.body.appendChild(link);
-            link.click();
-        }
-    </script>
-
-</head>
-
-<body>
-    <form><label for="stukturasid">Struktūrvienības ID:&nbsp; </label><input type="text" id="stukturasid"
-            name="stukturasid" size="24pt"></p>
-        <p><label for="strukturname">Struktūrvienības nosaukums: </label><input type="text" id="strukturname"
-                name="strukturname" size="16pt"></p>
-        <p><label for="strukturnameen">Name of structure: </label><input type="text" id="strukturnameen"
-                name="strukturnameen" size="26pt"></p>
+            
+        </script> 
+    </head>
+    <body>
+        <form onsubmit="return false"><label for="stukturasid">Struktūrvienības ID:&nbsp; </label><input type="text" id="stukturasid" name="stukturasid"size="24pt"></p>
+        <p><label for="strukturname">Struktūrvienības nosaukums: </label><input type="text" id="strukturname" name="strukturname"size="16pt"></p>
+        <p><label for="strukturnameen">Name of structure: </label><input type="text" id="strukturnameen" name="strukturnameen"size="26pt"></p>
         <button onclick="arrayToCSV()">Pievienot</button>
     </form>
-</body>
-
+    </body>
+    
 </html>
