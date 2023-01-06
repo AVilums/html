@@ -56,3 +56,40 @@ function compareToAmati(viens) {
         window.open("pievienots.html", "_self");
     }
 }
+
+function translateStrukturvieniba(string) {
+    if (string == "") {
+        string = "";
+    } else {
+        for (let j = 0; j < strukturasViss.length; j++) {
+            if (string == undefined) { break; }
+            if (string.trim() == strukturasViss[j][0].trim()) {
+                string = strukturasViss[j][1].trim();
+                break;
+            }
+        }
+    }
+    return string;
+}
+
+function translateAmati(string) {
+    if (string == "") {
+        string = "";
+    } else {
+        for (let j = 0; j < amatiViss.length; j++) {
+            if (string == undefined) { break; }
+            if (string.trim() == amatiViss[j][0].trim()) {
+                string = amatiViss[j][1].trim();
+                break;
+            }
+        }
+    }
+    return string;
+}
+
+function datuAizsardziba(string) {
+    if(string == undefined) { return }
+
+    if(string.trim() == "n") { return false;
+    } else { return true; }
+}  

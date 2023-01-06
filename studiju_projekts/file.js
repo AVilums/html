@@ -21,8 +21,7 @@ function checkFileAmount(myArray, count) {
     }
 }
 
-function compareThreeFiles(viens,divi,tris) {
-        
+function compareThreeFiles(viens,divi,tris) {   
     if (viens[0][0]=="Am.ID" && divi[0][0]=="Str.ID" && tris[0][0]=="ID") {
         forpush(viens,divi,tris); 
     }else if (viens[0][0]=="Str.ID" && divi[0][0]=="Am.ID" && tris[0][0]=="ID"){

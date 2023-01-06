@@ -16,15 +16,16 @@
     <h1>Personāla izvade pēc:</h1>
 
     <script>
-        //atdalitaji
+        // delimiters (?)
         var d1 = "!";
         var d2 = ",";
 
-        var amatiViss;  //viss fails 2d masīvā
-        var strukturasViss;  //viss fails 2d masīvā
-        var personalsViss;  //viss fails 2d masīvā
+        // for storing each .csv
+        var amatiViss;  
+        var strukturasViss;  
+        var personalsViss;  
 
-        // failu ierakstisana ka string 1d masiva
+        // write file to an array
         document.getElementById("csvFile").addEventListener("change", function (ev) {
             let files = ev.currentTarget.files;
             let readers = [];
@@ -40,23 +41,19 @@
             // Trigger Promises
             Promise.all(readers).then((values) => {
 
-                // parbauda vai tiesam ir 3 faili
                 if (values.length != 3) {
                     alert("Nav izvēlēti 3 faili");
                     window.open("izvadit_personalu.html", "_self");
                 }
 
-                //igust 2d masivus
                 let viens = stringTo2dArray(values[0], d1, d2);
                 let divi = stringTo2dArray(values[1], d1, d2);
                 let tris = stringTo2dArray(values[2], d1, d2);
 
-                //parbauda vai pievienoti pareizie faili
                 compareThreeFiles(viens, divi, tris);
             });
         }, false);
 
-        //iegust id
         const amati = [];
         const struktura = [];
         const personals = [];
@@ -82,43 +79,6 @@
 
             GFG_Fun(amati, struktura, personals);
         }
-
-        function translateStrukturvieniba(string) {
-            if (string == "") {
-                string = "";
-            } else {
-                for (let j = 0; j < strukturasViss.length; j++) {
-                    if (string == undefined) { break; }
-                    if (string.trim() == strukturasViss[j][0].trim()) {
-                        string = strukturasViss[j][1].trim();
-                        break;
-                    }
-                }
-            }
-            return string;
-        }
-
-        function translateAmati(string) {
-            if (string == "") {
-                string = "";
-            } else {
-                for (let j = 0; j < amatiViss.length; j++) {
-                    if (string == undefined) { break; }
-                    if (string.trim() == amatiViss[j][0].trim()) {
-                        string = amatiViss[j][1].trim();
-                        break;
-                    }
-                }
-            }
-            return string;
-        }
-
-        function datuAizsardziba(string) {
-            if(string == undefined) { return }
-
-            if(string.trim() == "n") { return false;
-            } else { return true; }
-        }  
         
         function copyStringToClipboard (string) {
             var el = document.createElement('textarea');
@@ -157,7 +117,7 @@
                     struktura = personalsViss[i][13];
                     struktura2 = personalsViss[i][15];
                     struktura3 = personalsViss[i][17];
-
+                    
                     amats = personalsViss[i][14];
                     amats2 = personalsViss[i][16];
                     amats3 = personalsViss[i][18];
@@ -203,16 +163,11 @@
                     } 
                 }
 
-                tempArrTwo.sort((a, b) => a[2].localeCompare(b[2]));
-
-                // var table = makeTableHTML(tempArrTwo);
-                // document.write(table);   
+                tempArrTwo.sort((a, b) => a[2].localeCompare(b[2]));  
 
                 for (let i = 0; i < tempArrTwo.length; i++) {
-                    // fullname = personalsViss[i][7] + " " + personalsViss[i][9];
                     fullname = tempArrTwo[i][1] + " " + tempArrTwo[i][2];
                     
-                    // contacts = personalsViss[i][7] + "." + personalsViss[i][9] + "@cfi.lu.lv   " + personalsViss[i][12]
                     contacts = tempArrTwo[i][6];
 
                     amats = tempArrTwo[i][3];
