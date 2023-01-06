@@ -15,10 +15,10 @@
 
     <script>
 
-        var strukturasViss;  //viss fails 2d masīvā
+        var strukturasViss;  
 
-        const struktura = []; // struktūru nosaukumu masīvs
-        const strukturaId = []; //struktūru id masīvs
+        const struktura = []; 
+        const strukturaId = []; 
 
         // Handle multiple fileuploads     
         document.getElementById("csvFile").addEventListener("change", function (ev) {
@@ -38,13 +38,18 @@
             });
         }, false);
 
+        function submitOnClick() {
+            strukturasViss.splice(strukturasViss.length - 1, 1);  
+            arrayToHTML();
+        }
+
     </script>
 
 </head>
 
 <body>
     <form>
-        <button onclick="arrayToHTML()">Izvadīt</button>
+        <button onclick="submitOnClick()">Izvadīt</button>
     </form>
 </body>
 
