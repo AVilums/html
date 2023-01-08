@@ -114,34 +114,32 @@
                     fullname = personalsViss[i][7] + " " + personalsViss[i][9];
                     contacts = personalsViss[i][7] + "." + personalsViss[i][9] + "@cfi.lu.lv   " + personalsViss[i][12] 
 
-                    struktura = personalsViss[i][13];
-                    struktura2 = personalsViss[i][15];
-                    struktura3 = personalsViss[i][17];
-                    
                     amats = personalsViss[i][14];
                     amats2 = personalsViss[i][16];
                     amats3 = personalsViss[i][18];
-
-                    struktura = translateStrukturvieniba(struktura);
-                    struktura2 = translateStrukturvieniba(struktura2);
-                    struktura3 = translateStrukturvieniba(struktura3);
-
                     amats = translateAmati(amats);
                     amats2 = translateAmati(amats2);
                     amats3 = translateAmati(amats3);
 
+                    struktura = personalsViss[i][13];
+                    struktura2 = personalsViss[i][15];
+                    struktura3 = personalsViss[i][17];
+                    struktura = translateStrukturvieniba(struktura);
+                    struktura2 = translateStrukturvieniba(struktura2);
+                    struktura3 = translateStrukturvieniba(struktura3);
+
                     if(datuAizsardziba(personalsViss[i][4])) { 
                         tempArr.push([personalsViss[i][10], fullname,
-                                        struktura, struktura2, struktura3,
-                                            amats, amats2, amats3, contacts]);
+                                        struktura, struktura2 + struktura3,
+                                            amats + "; " + amats2 + "; " + amats3, contacts]);
                     }
                 }
                 tempArr.splice(personalsViss.length - 1, 1); 
                 tempArr.sort((a, b) => a[2].localeCompare(b[2]));
 
                 tempArr.unshift(["Grāds", "Vārds Uzvārds",
-                "Struktūrvienība 1","Struktūrvienība 2", "Struktūrvienība 3",
-                "Amats 1", "Amats 2", "Amats 3", "Kontakti"]);
+                "Struktūrvienība 1","Struktūrvienība 2",
+                "Amats", "Kontaktinformācija"]);
 
             } else if (choice == "uzvards") {
                 let tempArrTwo = [];
@@ -152,13 +150,20 @@
                     amats = personalsViss[i][14];
                     amats2 = personalsViss[i][16];
                     amats3 = personalsViss[i][18];
-
                     amats = translateAmati(amats);
                     amats2 = translateAmati(amats2);
                     amats3 = translateAmati(amats3);
 
+                    struktura = personalsViss[i][13];
+                    struktura2 = personalsViss[i][15];
+                    struktura3 = personalsViss[i][17];
+                    struktura = translateStrukturvieniba(struktura);
+                    struktura2 = translateStrukturvieniba(struktura2);
+                    struktura3 = translateStrukturvieniba(struktura3);
+
                     if(datuAizsardziba(personalsViss[i][4])) { 
                         tempArrTwo.push([personalsViss[i][10], personalsViss[i][7], personalsViss[i][9],
+                            struktura, struktura2, struktura3,
                             amats, amats2, amats3, contacts]);
                     } 
                 }
@@ -168,24 +173,23 @@
                 for (let i = 0; i < tempArrTwo.length; i++) {
                     fullname = tempArrTwo[i][1] + " " + tempArrTwo[i][2];
                     
-                    contacts = tempArrTwo[i][6];
+                    contacts = tempArrTwo[i][9];
 
-                    amats = tempArrTwo[i][3];
-                    amats2 = tempArrTwo[i][4];
-                    amats3 = tempArrTwo[i][5];
+                    struktura = tempArrTwo[i][3];
+                    struktura2 = tempArrTwo[i][4];
+                    struktura3 = tempArrTwo[i][5];
 
-                    amats = translateAmati(amats);
-                    amats2 = translateAmati(amats2);
-                    amats3 = translateAmati(amats3);
+                    amats = tempArrTwo[i][6];
+                    amats2 = tempArrTwo[i][7];
+                    amats3 = tempArrTwo[i][8];
 
-                    tempArr.push([tempArrTwo[i][0], fullname,
-                        amats, amats2, amats3, contacts]);
-                    
+                    tempArr.push([tempArrTwo[i][0], fullname, struktura + "; " + struktura2 + "; " + struktura3,
+                        amats + "; " + amats2 + "; " + amats3, contacts]);
                 }
                 tempArr.splice(personalsViss.length - 1, 1);  
 
-                tempArr.unshift(["Grāds", "Vārds Uzvārds",
-                    "Amats 1", "Amats 2", "Amats 3", "Kontakti"]);
+                tempArr.unshift(["Grāds", "Vārds Uzvārds", "Struktūrvienība",
+                    "Amats", "Kontaktinformācija"]);
 
             } else if (choice == "empty") {
                 alert("Lūdzu izvēlaties tipu");

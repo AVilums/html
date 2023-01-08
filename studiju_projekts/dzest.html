@@ -1,37 +1,271 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <h1>Personāla vai struktūrvienības dzēšana</h1>
 
-<head>
-    <h1>Dzēšana (vajag 2 files, lai nav dropdown)</h1>
+        <p><form id="myForm">
+            <label for="csvFile">Pievienojiet <b>amati.csv</b>, <b>stukturvienibas.csv</b>, <b>personals.csv </b>failus</label>
+            <input type="file" id="csvFile" accept=".csv" multiple/>
+        </form></p>
 
-    <script>
-        function myFunction() {
-            var select = document.getElementById('delete');
-            var option = select.options[select.selectedIndex];
+        <style>
+            .delete {
+                width: 150pt;
+            }
+        </style>
 
-            //document.getElementById("value").value=option.value;
+        <script>
 
-            if (option.value == "strukturvieniba") {
-                var srtuktid = prompt("Ievadiet struktūrvienības ID");
-            } else if (option.value == "personals") {
-                var persid = prompt("Ievadiet personāla ID");
+            var d1 = "!";  //atdala masīva rindas
+            var d2 = ",";  //atdala masīva elementus rindā
+
+            let amatiViss;  //viss fails 2d masīvā
+            let strukturasViss;  //viss fails 2d masīvā
+            let personalsViss;  //viss fails 2d masīvā
+
+            const amati = []; //amatu nosaukumu masīvs
+            const struktura = []; // struktūru nosaukumu masīvs
+            const personals = [];  //personāla id masīvs
+            const amatiId = [];  //amatu id masīvs
+            const strukturaId = []; //struktūru id masīvs
+
+            //faila nolasisana
+            function readFileAsText(file){
+                    return new Promise(function(resolve,reject){
+                        let fr = new FileReader();
+                        
+                        fr.onload = function(){
+                            resolve(fr.result);
+                        };
+
+                        fr.onerror = function(){
+                            reject(fr);
+                        };
+
+                        fr.readAsText(file);
+                    });
+            }
+                
+            // Handle multiple fileuploads     
+            document.getElementById("csvFile").addEventListener("change", function(ev){
+                let files = ev.currentTarget.files;
+                let readers = [];
+
+                // Abort if there were no files selected
+                if(!files.length) return;
+
+                // Store promises in array
+                for(let i = 0;i < files.length;i++){
+                    readers.push(readFileAsText(files[i]));
+                }
+                            
+                // Trigger Promises
+                Promise.all(readers).then((values) => {
+                    
+                    let viens = stringTo2dArray(values[0],d1, d2);
+                    let divi = stringTo2dArray(values[1],d1, d2);
+                    let tris = stringTo2dArray(values[2],d1, d2);
+
+                    compare(viens,divi,tris);
+                });
+            }, false);
+            
+            //saliek stringus masivos
+            function stringTo2dArray(string, d1, d2) {
+                return string.split(d1).map(function(x){return x.split(d2)});
+            }
+                
+            //nosaka kurs ir kurs fails
+            function compare(viens, divi, tris) {
+                if (viens[0][0] == "Am.ID" && divi[0][0] == "Str.ID" && tris[0][0] == "ID") {
+                    forpush(viens, divi, tris);
+                } else if (viens[0][0] == "Str.ID" && divi[0][0] == "Am.ID" && tris[0][0] == "ID") {
+                    forpush(divi, viens, tris);
+                } else if (viens[0][0] == "ID" && divi[0][0] == "Str.ID" && tris[0][0] == "Am.ID") {
+                    forpush(tris, divi, viens);
+                } else if (viens[0][0] == "ID" && divi[0][0] == "Am.ID" && tris[0][0] == "Str.ID") {
+                    forpush(divi, tris, viens);
+                } else if (viens[0][0] == "Am.ID" && divi[0][0] == "ID" && tris[0][0] == "Str.ID") {
+                    forpush(viens, tris, divi);
+                } else if (viens[0][0] == "Str.ID" && divi[0][0] == "ID" && tris[0][0] == "Am.ID") {
+                    forpush(tris, viens, divi);
+                } else {
+                    alert("Izvēlēti nepareizi faili");
+                    window.open("dzest.html", "_self");
+                }
+            }
+                
+            //saliek pareizas vertibas pareizos masivos
+            function forpush(a,b,c){
+                
+                for (let i=1;i<a.length;i++){
+                    amati.push(a[i][1]); //amatu nosaukumi
+                    amatiId.push(a[i][0]); //amatu ID nosaukumi
+                } 
+                        
+                for (let i=1;i<b.length;i++){
+                    struktura.push(b[i][1]); //strukturu nosaukumi
+                    strukturaId.push(b[i][0]); //strukturu ID nosaukumi
+                }
+                        
+                for (let i=1;i<c.length;i++){
+                    personals.push(c[i][0]);   //personala id nosaukumi
+                } 
+
+                amatiViss=a;  //Visu amatu masivs
+                strukturasViss=b; //Visu  strukturas masivs 
+                personalsViss=c; //Visu personals masivs
+                GFG_Fun(amati,struktura,personals);
+            } 
+
+            function myFunction() {
+                var select = document.getElementById('delete');
+                var option = select.options[select.selectedIndex];
+                
+                if (option.value == "strukturvieniba"){
+                    strukturvienibaDzest();
+                }else if(option.value == "personals"){
+                    personalsDzest();
+                }else{
+                    alert("Nav izvēlēts, ko dzēst!");
+                    window.open("dzest.html", "_self");
+                }
             }
 
-        }
+            var rinda;
 
-    </script>
+            function strukturvienibaDzest(){
 
-</head>
+                var struktid=document.getElementById("personid").value;
+                var x=-1;
+                var z=0;
 
-<body>
+                if(struktid == ""){
+                    alert("Nav ievadīts ID!");
+                    window.open("dzest.html", "_self");
+                }else{
+                    for (var i=0;i<strukturaId.length;i++){
+                        if(struktid.trim()==strukturaId[i].trim()){
+                            x=i+1;
+                        }
+                    }
+
+                    rinda = x;
+
+                    if(x>-1){
+                        for (var i=0;i<strukturaId.length;i++){
+                            if(struktid.trim() == personalsViss[i][13].trim()){
+                                z=i;
+                            }
+                        }
+
+                        if(z==0){
+                            saglabat(strukturasViss);
+                        }else{
+                            alert("Nedrīkst dzēst, šajā struktūrvienībā ir personāls!");
+                            window.open("dzest.html", "_self");
+                        }
+                    }else{
+                        alert("Tāds ID neeksistē!");
+                        window.open("dzest.html", "_self");
+                    }
+                }
+            }
+        
+            function personalsDzest(){
+
+                var personid=document.getElementById("personid").value;
+                var x=-1;
+
+                if(personid == ""){
+                    alert("Nav ievadīts ID!");
+                    window.open("dzest.html", "_self");
+                }else{
+
+                    for (var i=0;i<personals.length;i++){
+                        if(parseInt(personid)==parseInt(personals[i])){
+                            x=i+1;
+                        }
+                    }
+                    rinda = x;
+                    if(x>-1){
+                        saglabat(personalsViss);
+                    }else{
+                        alert("Tāds ID neeksistē!");
+                        window.open("dzest.html", "_self");
+                    }
+                }
+            }
+
+            function saglabat(masivs){
+
+                masivs.pop(); //izdzes random rindinu
+                var nos;
+
+                if(masivs[0][0].trim()=="Am.ID"){
+                    nos="strukturvienibas";
+                }else if(masivs[0][0].trim()=="ID"){
+                    nos="personals";
+                }
+
+                //jauni masivi pievienosanai
+                var csvRows = [];
+                var temp;
+                for (let i = 0; i < masivs.length; i++) {
+                    temp = "";
+                    if(i!=rinda){
+                        for (let j = 0; j < masivs[0].length; j++) {  
+                            if (j < masivs[i].length - 1) {
+                                temp = temp + masivs[i][j] + ",";    
+                            } else {
+                                temp = temp + masivs[i][j] + "!";    
+                            }  
+                        }
+                    }
+                    csvRows[i] = temp;
+                }
+                        
+                //simbolu atkodesanai
+                var universalBOM = "\uFEFF";
+                //string, ko rakstit failaa
+                let csvContent = "data:text/csv;charset=utf-8," + universalBOM;
+
+                //string aizpildisana
+                for (let i = 0; i < csvRows.length; i++) {
+                    csvContent = csvContent + csvRows[i];
+                }
+
+                //faila download
+                var encodedUri = encodeURI(csvContent);
+                var link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", nos+".csv");
+                document.body.appendChild(link);
+                link.click();
+
+                alert("Dati veiksmīgi izdzēsti!");
+                window.open("dzest.html", "_self");
+            }
+
+        </script> 
+    </head>
+
+    <body>
+    <div>
     <form>
         <label for="delete">Dzēst</label>
-        <select name="delete" id="delete" onchange="myFunction()">
+        <select name="delete" id="delete" class="delete">
             <option value="empty" selected></option>
             <option value="strukturvieniba">Struktūrvienība</option>
             <option value="personals">Personāls</option>
         </select>
     </form>
-</body>
+    <p>
+    <form id="myForm2">
+        <p><label for="personid">Ievadīt dzēšamo ID:&nbsp; </label><input type="text" id="personid" name="personid"size="10pt"></p>
+
+    </p>
+    <button onclick="myFunction()">Saglabāt dzēšanu</button></form>
+    </body>
 
 </html>
